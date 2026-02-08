@@ -1,0 +1,230 @@
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus AI - Create Account</title>
+    <link rel="stylesheet" href="css/nexus-styles.css">
+    <link rel="stylesheet" href="css/nexus-animations.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="nexus-login-page">
+    
+    <div class="nexus-container">
+        <div class="universe-background" id="universeCanvas"></div>
+        
+        <div class="nexus-login-card">
+            <!-- Back Button -->
+            <button class="back-btn" onclick="window.location.href='index.html'">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Login</span>
+            </button>
+            
+            <!-- Logo & Title -->
+            <div class="nexus-logo-header">
+                <div class="atom-logo">
+                    <div class="atom-spin">
+                        <div class="nucleus-glow"></div>
+                        <div class="electron-ring ring-1"></div>
+                        <div class="electron-ring ring-2"></div>
+                        <div class="electron-ring ring-3"></div>
+                    </div>
+                </div>
+                <h1 class="nexus-title">CREATE <span class="ai-text">NEXUS ID</span></h1>
+                <p class="nexus-subtitle">Join the Quantum Intelligence Network</p>
+            </div>
+
+            <!-- Registration Form -->
+            <div class="login-form-container">
+                <h2><i class="fas fa-user-astronaut"></i> QUANTUM REGISTRATION</h2>
+                
+                <div class="form-group nexus-input-group">
+                    <label for="regName"><i class="fas fa-user"></i> Quantum Alias</label>
+                    <input type="text" id="regName" placeholder="Enter your display name" autocomplete="off" maxlength="30">
+                    <div class="input-glow"></div>
+                    <div class="input-hint">This will be your identity in the Nexus network</div>
+                </div>
+                
+                <div class="form-group nexus-input-group">
+                    <label for="regEmail"><i class="fas fa-envelope"></i> Quantum ID (Email)</label>
+                    <input type="email" id="regEmail" placeholder="nexus@quantum.ai" autocomplete="off">
+                    <div class="input-glow"></div>
+                    <div class="input-hint">We'll send verification to this address</div>
+                </div>
+                
+                <div class="form-group nexus-input-group">
+                    <label for="regPassword"><i class="fas fa-lock"></i> Encryption Key</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="regPassword" placeholder="Create a strong password">
+                        <button type="button" class="password-toggle" id="toggleRegPassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="input-glow"></div>
+                    
+                    <div class="password-strength" id="regPasswordStrength">
+                        <div class="strength-bar"></div>
+                        <div class="strength-details">
+                            <span class="strength-text">Password Strength: None</span>
+                            <div class="strength-rules">
+                                <span class="rule"><i class="fas fa-check-circle valid"></i> At least 8 characters</span>
+                                <span class="rule"><i class="fas fa-times-circle invalid"></i> Uppercase letter</span>
+                                <span class="rule"><i class="fas fa-times-circle invalid"></i> Lowercase letter</span>
+                                <span class="rule"><i class="fas fa-times-circle invalid"></i> Number</span>
+                                <span class="rule"><i class="fas fa-times-circle invalid"></i> Special character</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group nexus-input-group">
+                    <label for="regConfirmPassword"><i class="fas fa-lock"></i> Confirm Encryption Key</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="regConfirmPassword" placeholder="Re-enter your password">
+                        <button type="button" class="password-toggle" id="toggleConfirmPassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="input-glow"></div>
+                    <div class="password-match" id="passwordMatch">
+                        <i class="fas fa-times"></i>
+                        <span>Passwords do not match</span>
+                    </div>
+                </div>
+                
+                <div class="form-group terms-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="agreeTerms">
+                        <span class="checkmark"></span>
+                        <span class="terms-text">
+                            I agree to the <a href="#" class="terms-link">Quantum Service Agreement</a> 
+                            and <a href="#" class="terms-link">Privacy Protocol</a>
+                        </span>
+                    </label>
+                </div>
+                
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="newsletterOptIn" checked>
+                        <span class="checkmark"></span>
+                        <span class="terms-text">
+                            Receive quantum updates, tips, and AI insights
+                        </span>
+                    </label>
+                </div>
+
+                <button class="nexus-btn register-btn" id="nexusRegisterBtn">
+                    <i class="fas fa-atom"></i>
+                    <span>INITIATE QUANTUM SYNTHESIS</span>
+                    <div class="btn-glow"></div>
+                </button>
+
+                <div class="divider">
+                    <span>OR CONTINUE WITH</span>
+                </div>
+
+                <button class="nexus-btn google-btn" id="googleRegisterBtn">
+                    <img src="https://www.google.com/favicon.ico" alt="Google">
+                    <span>GOOGLE QUANTUM LINK</span>
+                </button>
+
+                <div class="login-redirect">
+                    <p>Already have a quantum signature?</p>
+                    <button class="login-link" onclick="window.location.href='index.html'">
+                        <i class="fas fa-sign-in-alt"></i> ACCESS QUANTUM CORE
+                    </button>
+                </div>
+            </div>
+
+            <!-- Security Footer -->
+            <div class="nexus-footer">
+                <div class="security-badge">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>ENCRYPTION: QUANTUM-RESISTANT AES-256-GCM</span>
+                </div>
+                <div class="version-info">
+                    <span>NEXUS REGISTRATION | BETA ACCESS</span>
+                    <span class="access-key">REGISTRATION: OPEN</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Messages -->
+        <div id="nexusStatus" class="status-message">
+            <i class="fas fa-info-circle"></i>
+            <span id="statusText">Ready for quantum synthesis</span>
+        </div>
+        
+        <!-- Processing Screen (Hidden) -->
+        <div id="processingScreen" class="processing-screen">
+            <div class="processing-content">
+                <div class="processing-spinner">
+                    <div class="quantum-orb"></div>
+                    <div class="orb-ring"></div>
+                    <div class="orb-particle particle-1"></div>
+                    <div class="orb-particle particle-2"></div>
+                    <div class="orb-particle particle-3"></div>
+                </div>
+                <h2 class="processing-title">INITIATING QUANTUM SYNTHESIS</h2>
+                <p class="processing-text" id="processingText">Creating your Nexus identity...</p>
+                <div class="processing-steps">
+                    <div class="step active" data-step="1">Generating Quantum Signature</div>
+                    <div class="step" data-step="2">Encrypting Identity Matrix</div>
+                    <div class="step" data-step="3">Establishing Neural Connection</div>
+                    <div class="step" data-step="4">Finalizing Nexus Integration</div>
+                </div>
+                <div class="processing-progress">
+                    <div class="progress-fill" id="processingProgress"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="js/nexus-firebase.js"></script>
+    <script src="js/nexus-register.js"></script>
+    
+    <script>
+        // Initialize universe background
+        document.addEventListener('DOMContentLoaded', function() {
+            particlesJS('universeCanvas', {
+                particles: {
+                    number: { value: 200, density: { enable: true, value_area: 800 } },
+                    color: { value: ["#ff0080", "#00ffaa", "#8b5cf6", "#3b82f6"] },
+                    shape: { type: "circle" },
+                    opacity: { value: 0.7, random: true },
+                    size: { value: 2, random: true, anim: { enable: true, speed: 3 } },
+                    line_linked: {
+                        enable: true,
+                        distance: 100,
+                        color: "#8b5cf6",
+                        opacity: 0.3,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 1.5,
+                        direction: "none",
+                        random: true,
+                        straight: false,
+                        out_mode: "out",
+                        bounce: false,
+                        attract: { enable: true, rotateX: 600, rotateY: 1200 }
+                    }
+                },
+                interactivity: {
+                    detect_on: "canvas",
+                    events: {
+                        onhover: { enable: true, mode: "repulse" },
+                        onclick: { enable: true, mode: "push" }
+                    }
+                },
+                retina_detect: true
+            });
+        });
+    </script>
+</body>
+          </html>

@@ -1,3 +1,387 @@
+const FIREBASE_CONFIG = {
+    apiKey: "AIzaSyBK-MehTTzURY5jT5stH363Y5_WE4iy-XA",
+    authDomain: "volca-tools.firebaseapp.com",
+    projectId: "volca-tools",
+    storageBucket: "volca-tools.firebasestorage.app",
+    messagingSenderId: "262525907487",
+    appId: "1:262525907487:web:4abc37fa3b583223569b2a",
+    measurementId: "G-Q6W58HE2B3"
+};
+
+// Initialize Firebase
+let firebaseApp, auth, db, storage;
+
+try {
+    firebaseApp = firebase.initializeApp(FIREBASE_CONFIG);
+    auth = firebase.auth();
+    db = firebase.firestore();
+    storage = firebase.storage();
+    console.log("🔥 Firebase initialized successfully!");
+} catch (error) {
+    console.log("⚠️ Firebase initialization failed, using local storage mode");
+}
+
+// ===== FIREBASE FUNCTIONS =====
+async function firebaseLogin(email, password) {
+    if (!auth) {
+        throw new Error("Firebase not initialized");
+    }
+    
+    try {
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        return {
+            uid: userCredential.user.uid,
+            name: userCredential.user.displayName || email.split('@')[0],
+            email: userCredential.user.email,
+            photoURL: userCredential.user.photoURL,
+            isFirebase: true
+        };
+    } catch (error) {
+        console.error("Firebase login error:", error);
+        throw error;
+    }
+}
+
+async function firebaseRegister(name, email, password) {
+    if (!auth || !db) {
+        throw new Error("Firebase not initialized");
+    }
+    
+    try {
+        // Create user in Firebase Auth
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        
+        // Update profile
+        await userCredential.user.updateProfile({ displayName: name });
+        
+        // Save user data to Firestore
+        await db.collection('users').doc(userCredential.user.uid).set({
+            name: name,
+            email: email,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            plan: 'free',
+            storageUsed: 0,
+            lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        return {
+            uid: userCredential.user.uid,
+            name: name,
+            email: email,
+            photoURL: userCredential.user.photoURL,
+            isFirebase: true
+        };
+    } catch (error) {
+        console.error("Firebase register error:", error);
+        throw error;
+    }
+}
+
+async function firebaseGoogleLogin() {
+    if (!auth || !db) {
+        throw new Error("Firebase not initialized");
+    }
+    
+    try {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        provider.addScope('profile');
+        provider.addScope('email');
+        
+        const result = await auth.signInWithPopup(provider);
+        const user = result.user;
+        
+        // Check if user exists in Firestore
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        
+        if (!userDoc.exists) {
+            await db.collection('users').doc(user.uid).set({
+                name: user.displayName,
+                email: user.email,
+                photoURL: user.photoURL,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                plan: 'free',
+                storageUsed: 0,
+                lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        } else {
+            // Update last login
+            await db.collection('users').doc(user.uid).update({
+                lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        }
+        
+        return {
+            uid: user.uid,
+            name: user.displayName,
+            email: user.email,
+            photoURL: user.photoURL,
+            isFirebase: true
+        };
+    } catch (error) {
+        console.error("Google login error:", error);
+        throw error;
+    }
+}
+
+async function saveChatFirebase(chatData) {
+    if (!db || !currentUser?.uid) {
+        return false; // Fallback to localStorage
+    }
+    
+    try {
+        const chatRef = await db.collection('chats').add({
+            ...chatData,
+            userId: currentUser.uid,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            model: elements.aiModel.value
+        });
+        
+        // Update user's storage usage
+        const chatSize = JSON.stringify(chatData).length;
+        await db.collection('users').doc(currentUser.uid).update({
+            storageUsed: firebase.firestore.FieldValue.increment(chatSize),
+            lastActivity: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        return chatRef.id;
+    } catch (error) {
+        console.error("Save chat to Firebase error:", error);
+        return false;
+    }
+}
+
+async function loadChatsFirebase() {
+    if (!db || !currentUser?.uid) {
+        return []; // Fallback to localStorage
+    }
+    
+    try {
+        const snapshot = await db.collection('chats')
+            .where('userId', '==', currentUser.uid)
+            .orderBy('timestamp', 'desc')
+            .limit(20)
+            .get();
+        
+        return snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+    } catch (error) {
+        console.error("Load chats from Firebase error:", error);
+        return [];
+    }
+}
+
+async function getUserStorageInfo() {
+    if (!db || !currentUser?.uid) {
+        return { used: 0, limit: 100000000 }; // 100MB default
+    }
+    
+    try {
+        const userDoc = await db.collection('users').doc(currentUser.uid).get();
+        if (userDoc.exists) {
+            const data = userDoc.data();
+            return {
+                used: data.storageUsed || 0,
+                limit: data.plan === 'premium' ? 1000000000 : 100000000 // 1GB vs 100MB
+            };
+        }
+        return { used: 0, limit: 100000000 };
+    } catch (error) {
+        console.error("Get storage info error:", error);
+        return { used: 0, limit: 100000000 };
+    }
+}
+
+// ===== MODIFIED AUTH FUNCTIONS =====
+async function handleLogin() {
+    const email = elements.loginEmail.value.trim();
+    const password = elements.loginPass.value;
+    
+    if (!email || !password) {
+        showNotification('Please enter email and password', 'error');
+        return;
+    }
+    
+    elements.loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> AUTHENTICATING...';
+    elements.loginBtn.disabled = true;
+    
+    try {
+        let user;
+        
+        if (auth) {
+            // Try Firebase auth first
+            user = await firebaseLogin(email, password);
+        } else {
+            // Fallback to localStorage
+            setTimeout(() => {
+                user = {
+                    name: email.split('@')[0],
+                    email: email,
+                    avatar: email.charAt(0).toUpperCase(),
+                    isFirebase: false
+                };
+                
+                localStorage.setItem('nexus_user', JSON.stringify(user));
+                currentUser = user;
+                showNotification('🔐 Login successful!', 'success');
+                showDashboard();
+            }, 1500);
+            return;
+        }
+        
+        // Save user data
+        localStorage.setItem('nexus_user', JSON.stringify(user));
+        currentUser = user;
+        
+        showNotification('🔐 Quantum synchronization successful!', 'success');
+        showDashboard();
+        
+    } catch (error) {
+        console.error("Login error:", error);
+        showNotification(`Login failed: ${error.message}`, 'error');
+        
+        // Fallback to demo login
+        currentUser = {
+            name: email.split('@')[0],
+            email: email,
+            avatar: email.charAt(0).toUpperCase(),
+            isFirebase: false
+        };
+        
+        localStorage.setItem('nexus_user', JSON.stringify(currentUser));
+        setTimeout(() => {
+            showNotification('Using demo mode', 'info');
+            showDashboard();
+        }, 1000);
+    } finally {
+        elements.loginBtn.innerHTML = '<i class="fas fa-brain"></i> QUANTUM ACCESS';
+        elements.loginBtn.disabled = false;
+    }
+}
+
+async function handleGoogleLogin() {
+    elements.googleLogin.innerHTML = '<i class="fas fa-spinner fa-spin"></i> CONNECTING...';
+    elements.googleLogin.disabled = true;
+    
+    try {
+        let user;
+        
+        if (auth) {
+            user = await firebaseGoogleLogin();
+        } else {
+            // Fallback to simulated Google login
+            setTimeout(() => {
+                user = {
+                    name: 'Google User',
+                    email: 'user@gmail.com',
+                    avatar: 'G',
+                    isFirebase: false
+                };
+                
+                localStorage.setItem('nexus_user', JSON.stringify(user));
+                currentUser = user;
+                showNotification('✅ Google login successful!', 'success');
+                showDashboard();
+            }, 1500);
+            return;
+        }
+        
+        localStorage.setItem('nexus_user', JSON.stringify(user));
+        currentUser = user;
+        
+        showNotification('✅ Google Quantum Link established!', 'success');
+        showDashboard();
+        
+    } catch (error) {
+        console.error("Google login error:", error);
+        showNotification(`Google login failed: ${error.message}`, 'error');
+        
+        // Fallback
+        currentUser = {
+            name: 'Google User',
+            email: 'user@gmail.com',
+            avatar: 'G',
+            isFirebase: false
+        };
+        
+        localStorage.setItem('nexus_user', JSON.stringify(currentUser));
+        setTimeout(() => {
+            showNotification('Using demo mode', 'info');
+            showDashboard();
+        }, 1000);
+    } finally {
+        elements.googleLogin.innerHTML = '<i class="fab fa-google"></i> GOOGLE QUANTUM';
+        elements.googleLogin.disabled = false;
+    }
+}
+
+// ===== MODIFIED STORAGE CHECK =====
+async function checkStorageLimit() {
+    // If Firebase is available, get real storage data
+    if (currentUser?.isFirebase && auth) {
+        try {
+            const storageInfo = await getUserStorageInfo();
+            const usedPercent = (storageInfo.used / storageInfo.limit) * 100;
+            
+            document.getElementById('storagePercent').textContent = Math.round(usedPercent) + '%';
+            
+            if (usedPercent > 85) {
+                document.querySelector('.storage-warning').style.display = 'flex';
+                return usedPercent > 90;
+            } else {
+                document.querySelector('.storage-warning').style.display = 'none';
+                return false;
+            }
+        } catch (error) {
+            console.error("Storage check error:", error);
+            // Fallback to simulated check
+        }
+    }
+    
+    // Simulated storage check (for demo/local mode)
+    const usedStorage = 70 + Math.random() * 25; // 70-95%
+    document.getElementById('storagePercent').textContent = Math.round(usedStorage) + '%';
+    
+    if (usedStorage > 85) {
+        document.querySelector('.storage-warning').style.display = 'flex';
+        return usedStorage > 90;
+    } else {
+        document.querySelector('.storage-warning').style.display = 'none';
+        return false;
+    }
+}
+
+// ===== MODIFIED SAVE CHAT FUNCTION =====
+async function saveChatHistory() {
+    if (!chatHistory.length) return;
+    
+    try {
+        if (currentUser?.isFirebase && db) {
+            // Save to Firebase
+            const chatData = {
+                messages: chatHistory,
+                title: chatHistory[0]?.text?.substring(0, 50) || 'New Chat',
+                model: elements.aiModel.value,
+                messageCount: chatHistory.length
+            };
+            
+            await saveChatFirebase(chatData);
+        } else {
+            // Save to localStorage
+            localStorage.setItem('nexus_chat_history', JSON.stringify(chatHistory));
+        }
+    } catch (error) {
+        console.error("Save chat error:", error);
+        // Fallback to localStorage
+        try {
+            localStorage.setItem('nexus_chat_history', JSON.stringify(chatHistory));
+        } catch (e) {
+            console.error("Local storage save error:", e);
+        }
+    }
+}
+
 const NEXUS_CONFIG = {
     // API Keys (Edit disini)
     API_KEYS: {

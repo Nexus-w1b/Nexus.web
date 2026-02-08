@@ -1,1601 +1,503 @@
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> NEXUS AI - VOLCA EDITION </title>
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        :root {
-            /* Quantum Colors */
-            --q-primary: #ff0080;
-            --q-secondary: #00ffaa;
-            --q-accent: #8b5cf6;
-            --q-dark: #0a0a1a;
-            --q-darker: #050510;
-            --q-card: rgba(20, 20, 40, 0.9);
-            --q-text: #ffffff;
-            --q-text-muted: #b0b0ff;
-        }
-        
-        body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background: var(--q-darker);
-            color: var(--q-text);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        
-        /* ===== LOADING SCREEN ===== */
-        #loadingScreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #050510 0%, #0a0a1a 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease;
-        }
-        
-        .quantum-loader {
-            width: 200px;
-            height: 200px;
-            position: relative;
-            margin-bottom: 30px;
-        }
-        
-        .atom {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100%;
-            height: 100%;
-        }
-        
-        .nucleus {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 30px;
-            height: 30px;
-            background: var(--q-primary);
-            border-radius: 50%;
-            box-shadow: 0 0 30px var(--q-primary);
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); }
-            50% { transform: translate(-50%, -50%) scale(1.2); }
-        }
-        
-        .orbit {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            border: 2px solid var(--q-accent);
-            border-radius: 50%;
-            opacity: 0.5;
-        }
-        
-        .orbit-1 {
-            width: 120px;
-            height: 120px;
-            animation: spin 10s linear infinite;
-        }
-        
-        .orbit-2 {
-            width: 160px;
-            height: 160px;
-            animation: spin 15s linear infinite reverse;
-        }
-        
-        .orbit-3 {
-            width: 200px;
-            height: 200px;
-            animation: spin 20s linear infinite;
-        }
-        
-        @keyframes spin {
-            from { transform: translate(-50%, -50%) rotate(0deg); }
-            to { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-        
-        .electron {
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            width: 15px;
-            height: 15px;
-            background: var(--q-secondary);
-            border-radius: 50%;
-            box-shadow: 0 0 15px var(--q-secondary);
-        }
-        
-        .loading-text {
-            font-size: 20px;
-            font-weight: bold;
-            color: var(--q-secondary);
-            margin-bottom: 20px;
-            text-align: center;
-            letter-spacing: 2px;
-        }
-        
-        .loading-subtext {
-            color: var(--q-text-muted);
-            margin-bottom: 30px;
-        }
-        
-        .progress-bar {
-            width: 300px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--q-primary), var(--q-accent));
-            width: 0%;
-            animation: loading 2s ease-in-out infinite;
-        }
-        
-        @keyframes loading {
-            0% { width: 0%; }
-            50% { width: 70%; }
-            100% { width: 100%; }
-        }
-        
-        /* ===== LOGIN PAGE ===== */
-        #loginPage {
-            display: none;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .login-container {
-            max-width: 500px;
-            margin: 50px auto;
-            background: var(--q-card);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            animation: fadeIn 0.8s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .logo-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        
-        .logo-title {
-            font-size: 48px;
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--q-primary), var(--q-secondary), var(--q-accent));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 10px;
-        }
-        
-        .logo-subtitle {
-            color: var(--q-text-muted);
-            letter-spacing: 3px;
-            font-size: 14px;
-        }
-        
-        .form-group {
-            margin-bottom: 25px;
-        }
-        
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--q-text-muted);
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .form-input {
-            width: 100%;
-            padding: 16px 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 2px solid rgba(139, 92, 246, 0.3);
-            border-radius: 12px;
-            color: var(--q-text);
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-        
-        .form-input:focus {
-            outline: none;
-            border-color: var(--q-primary);
-            box-shadow: 0 0 0 3px rgba(255, 0, 128, 0.2);
-        }
-        
-        .password-wrapper {
-            position: relative;
-        }
-        
-        .toggle-password {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: var(--q-text-muted);
-            cursor: pointer;
-            padding: 5px;
-        }
-        
-        .btn {
-            position: relative;
-            padding: 18px 30px;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            width: 100%;
-            margin-bottom: 15px;
-            letter-spacing: 1px;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--q-primary), var(--q-accent));
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(255, 0, 128, 0.3);
-        }
-        
-        .btn-secondary {
-            background: var(--q-card);
-            border: 2px solid rgba(139, 92, 246, 0.3);
-            color: var(--q-text);
-        }
-        
-        .divider {
-            display: flex;
-            align-items: center;
-            margin: 25px 0;
-            color: var(--q-text-muted);
-        }
-        
-        .divider::before,
-        .divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.3), transparent);
-        }
-        
-        .divider span {
-            padding: 0 20px;
-        }
-        
-        .footer {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(139, 92, 246, 0.3);
-            text-align: center;
-            font-size: 12px;
-            color: var(--q-text-muted);
-        }
-        
-        .link {
-            color: var(--q-secondary);
-            text-decoration: none;
-            cursor: pointer;
-        }
-        
-        .link:hover {
-            text-decoration: underline;
-        }
-        
-        /* ===== DASHBOARD ===== */
-        #dashboard {
-            display: none;
-            min-height: 100vh;
-        }
-        
-        .dashboard-container {
-            display: flex;
-            min-height: 100vh;
-        }
-        
-        .sidebar {
-            width: 280px;
-            background: var(--q-dark);
-            border-right: 1px solid rgba(139, 92, 246, 0.3);
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .sidebar-header {
-            padding: 25px 20px;
-            border-bottom: 1px solid rgba(139, 92, 246, 0.3);
-        }
-        
-        .sidebar-title {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--q-primary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .user-profile {
-            padding: 20px;
-            border-bottom: 1px solid rgba(139, 92, 246, 0.3);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .user-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--q-accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
-        
-        .user-info h4 {
-            font-size: 16px;
-            margin-bottom: 4px;
-        }
-        
-        .user-info p {
-            font-size: 13px;
-            color: var(--q-text-muted);
-        }
-        
-        .nav-menu {
-            padding: 20px;
-            flex: 1;
-        }
-        
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 15px;
-            color: var(--q-text);
-            text-decoration: none;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-item:hover {
-            background: rgba(139, 92, 246, 0.1);
-        }
-        
-        .nav-item.active {
-            background: linear-gradient(135deg, rgba(255, 0, 128, 0.2), rgba(139, 92, 246, 0.2));
-            color: var(--q-primary);
-        }
-        
-        .sidebar-footer {
-            padding: 20px;
-            border-top: 1px solid rgba(139, 92, 246, 0.3);
-        }
-        
-        .main-content {
-            flex: 1;
-            padding: 20px;
-            background: var(--q-darker);
-        }
-        
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(139, 92, 246, 0.3);
-        }
-        
-        .model-selector {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .model-select {
-            padding: 10px 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            border-radius: 10px;
-            color: var(--q-text);
-            font-size: 14px;
-            min-width: 200px;
-        }
-        
-        .top-actions {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .action-btn {
-            padding: 10px 20px;
-            background: rgba(139, 92, 246, 0.1);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            border-radius: 10px;
-            color: var(--q-text);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .chat-container {
-            max-width: 900px;
-            margin: 0 auto;
-            height: calc(100vh - 150px);
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .welcome-screen {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-        
-        .welcome-content h1 {
-            font-size: 36px;
-            margin-bottom: 15px;
-            color: var(--q-primary);
-        }
-        
-        .welcome-content p {
-            color: var(--q-text-muted);
-            margin-bottom: 30px;
-        }
-        
-        .quick-actions {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        
-        .quick-btn {
-            padding: 15px 25px;
-            background: rgba(139, 92, 246, 0.1);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            border-radius: 10px;
-            color: var(--q-text);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.3s ease;
-        }
-        
-        .quick-btn:hover {
-            background: rgba(139, 92, 246, 0.2);
-            transform: translateY(-2px);
-        }
-        
-        .messages-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            background: rgba(10, 10, 26, 0.5);
-            border-radius: 15px;
-            margin-bottom: 20px;
-            display: none;
-        }
-        
-        .message {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        .message.user {
-            flex-direction: row-reverse;
-        }
-        
-        .message-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--q-accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 18px;
-            flex-shrink: 0;
-        }
-        
-        .message.user .message-avatar {
-            background: var(--q-primary);
-        }
-        
-        .message-content {
-            max-width: 70%;
-            background: rgba(139, 92, 246, 0.1);
-            border: 1px solid rgba(139, 92, 246, 0.2);
-            border-radius: 15px;
-            padding: 15px;
-        }
-        
-        .message.user .message-content {
-            background: linear-gradient(135deg, rgba(255, 0, 128, 0.1), rgba(139, 92, 246, 0.1));
-            border-color: rgba(255, 0, 128, 0.3);
-        }
-        
-        .message-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 12px;
-            color: var(--q-text-muted);
-        }
-        
-        .message-text {
-            line-height: 1.6;
-        }
-        
-        .input-area {
-            margin-top: 20px;
-        }
-        
-        .input-wrapper {
-            display: flex;
-            gap: 10px;
-        }
-        
-        #messageInput {
-            flex: 1;
-            padding: 15px 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 2px solid rgba(139, 92, 246, 0.3);
-            border-radius: 12px;
-            color: var(--q-text);
-            font-size: 16px;
-            resize: none;
-            min-height: 50px;
-            max-height: 200px;
-            font-family: inherit;
-        }
-        
-        #messageInput:focus {
-            outline: none;
-            border-color: var(--q-primary);
-        }
-        
-        .send-btn {
-            padding: 0 30px;
-            background: linear-gradient(135deg, var(--q-primary), var(--q-accent));
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-size: 18px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .typing-indicator {
-            display: none;
-            padding: 10px;
-            color: var(--q-secondary);
-            font-size: 14px;
-        }
-        
-        /* ===== REGISTER PAGE ===== */
-        #registerPage {
-            display: none;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 768px) {
-            .dashboard-container {
-                flex-direction: column;
-            }
-            
-            .sidebar {
-                width: 100%;
-                height: auto;
-            }
-            
-            .login-container {
-                margin: 20px;
-                padding: 30px;
-            }
-            
-            .logo-title {
-                font-size: 36px;
-            }
-            
-            .quick-actions {
-                flex-direction: column;
-            }
-        }
-        
-        /* ===== UTILITY CLASSES ===== */
-        .hidden {
-            display: none !important;
-        }
-        
-        .text-center {
-            text-align: center;
-        }
-        
-        .mb-10 { margin-bottom: 10px; }
-        .mb-20 { margin-bottom: 20px; }
-        .mb-30 { margin-bottom: 30px; }
-        
-        .glow-text {
-            text-shadow: 0 0 10px currentColor;
-        }
-        
-        /* Scrollbar Styling */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.1);
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, var(--q-primary), var(--q-accent));
-            border-radius: 4px;
-        }
-    </style>
-
-        <!-- FONT AWESOME CDN -->
+    <title> NEXUS AI - VOLCA EDITION</title>
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- ===== LOADING SCREEN ===== -->
-    <div id="loadingScreen">
+    <!-- LOADING ANIMATION -->
+    <div id="loadingScreen" class="active">
         <div class="quantum-loader">
-            <div class="atom">
+            <div class="atom-core">
                 <div class="nucleus"></div>
-                <div class="orbit orbit-1">
-                    <div class="electron"></div>
-                </div>
-                <div class="orbit orbit-2">
-                    <div class="electron"></div>
-                </div>
-                <div class="orbit orbit-3">
-                    <div class="electron"></div>
-                </div>
+                <div class="orbit o1"></div>
+                <div class="orbit o2"></div>
+                <div class="orbit o3"></div>
+                <div class="electron e1"></div>
+                <div class="electron e2"></div>
+                <div class="electron e3"></div>
             </div>
         </div>
-        <h2 class="loading-text"> NEXUS AI </h2>
-        <p class="loading-subtext">Initializing Quantum Intelligence Core...</p>
+        <h2 class="loading-text">NEXUS AI QUANTUM CORE</h2>
+        <p class="loading-sub">Initializing Neural Network...</p>
         <div class="progress-bar">
             <div class="progress-fill"></div>
         </div>
     </div>
-    
-    <!-- ===== LOGIN PAGE ===== -->
-    <div id="loginPage">
+
+    <!-- LOGIN PAGE -->
+    <div id="loginPage" class="hidden">
         <div class="login-container">
             <div class="logo-header">
-                <h1 class="logo-title">NEXUS AI</h1>
-                <p class="logo-subtitle">QUANTUM INTELLIGENCE PLATFORM</p>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">
-                    <i class="fas fa-envelope"></i> Quantum ID
-                </label>
-                <input type="email" id="loginEmail" class="form-input" placeholder="user@nexus.ai">
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">
-                    <i class="fas fa-lock"></i> Encryption Key
-                </label>
-                <div class="password-wrapper">
-                    <input type="password" id="loginPassword" class="form-input" placeholder="••••••••">
-                    <button type="button" class="toggle-password" id="togglePassword">
-                        <i class="fas fa-eye"></i>
-                    </button>
+                <div class="logo-anim">
+                    <div class="atom-logo"></div>
                 </div>
+                <h1 class="logo-title"> NEXUS AI</h1>
+                <p class="logo-sub">QUANTUM INTELLIGENCE SYSTEM</p>
+            </div>
+
+            <div id="loginForm">
+                <div class="form-group">
+                    <label><i class="fas fa-user-astronaut"></i> NEXUS ID</label>
+                    <input type="email" id="loginEmail" placeholder="nexus@quantum.ai">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-key"></i> ENCRYPTION KEY</label>
+                    <div class="pass-wrap">
+                        <input type="password" id="loginPass" placeholder="••••••••">
+                        <button class="pass-toggle"><i class="fas fa-eye"></i></button>
+                    </div>
+                </div>
+                <button id="loginBtn" class="btn neon-btn">
+                    <i class="fas fa-brain"></i> QUANTUM ACCESS
+                </button>
+                
+                <div class="divider">OR CONNECT WITH</div>
+                
+                <button id="googleLogin" class="btn outline-btn">
+                    <i class="fab fa-google"></i> GOOGLE QUANTUM
+                </button>
+                
+                <p class="register-link">
+                    No quantum signature? 
+                    <a href="#" id="showRegister">Create Nexus ID</a>
+                </p>
+            </div>
+
+            <div id="registerForm" class="hidden">
+                <button id="backToLogin" class="btn back-btn">
+                    <i class="fas fa-arrow-left"></i> BACK
+                </button>
+                
+                <h3><i class="fas fa-user-plus"></i> CREATE NEXUS ID</h3>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-signature"></i> QUANTUM NAME</label>
+                    <input type="text" id="regName" placeholder="Enter your name">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> NEXUS EMAIL</label>
+                    <input type="email" id="regEmail" placeholder="nexus@quantum.ai">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> ENCRYPTION KEY</label>
+                    <input type="password" id="regPass" placeholder="Min 8 karakter + angka">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> CONFIRM KEY</label>
+                    <input type="password" id="regConfirm" placeholder="Re-enter key">
+                </div>
+                
+                <button id="registerBtn" class="btn neon-btn">
+                    <i class="fas fa-atom"></i> ACTIVATE NEXUS
+                </button>
             </div>
             
-            <button class="btn btn-primary" id="loginBtn">
-                <i class="fas fa-brain"></i>
-                QUANTUM SYNCHRONIZATION
-            </button>
-            
-            <div class="divider">
-                <span>OR</span>
-            </div>
-            
-            <button class="btn btn-secondary" id="googleLoginBtn">
-                <i class="fab fa-google"></i>
-                CONTINUE WITH GOOGLE
-            </button>
-            
-            <p class="text-center mb-20">
-                No quantum signature detected?
-                <a class="link" id="showRegister">CREATE NEXUS ID</a>
-            </p>
-            
-            <div class="footer">
-                <p>ENCRYPTION: QUANTUM-SAFE AES-256-GCM</p>
-                <p>NEXUS CORE | VOLCA MODIFIED EDITION</p>
+            <div class="footer-info">
+                <p><i class="fas fa-shield-alt"></i> Quantum AES-256 Encryption</p>
+                <p>VOLCA V10.0 Modified Edition</p>
             </div>
         </div>
     </div>
-    
-    <!-- ===== REGISTER PAGE ===== -->
-    <div id="registerPage">
-        <div class="login-container">
-            <button class="btn btn-secondary mb-20" id="backToLogin">
-                <i class="fas fa-arrow-left"></i>
-                BACK TO LOGIN
-            </button>
-            
-            <div class="logo-header">
-                <h1 class="logo-title">CREATE NEXUS ID</h1>
-                <p class="logo-subtitle">JOIN THE QUANTUM NETWORK</p>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">
-                    <i class="fas fa-user"></i> Quantum Alias
-                </label>
-                <input type="text" id="regName" class="form-input" placeholder="Enter your name">
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">
-                    <i class="fas fa-envelope"></i> Quantum ID
-                </label>
-                <input type="email" id="regEmail" class="form-input" placeholder="nexus@quantum.ai">
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">
-                    <i class="fas fa-lock"></i> Encryption Key
-                </label>
-                <div class="password-wrapper">
-                    <input type="password" id="regPassword" class="form-input" placeholder="Create strong password">
-                    <button type="button" class="toggle-password" id="toggleRegPassword">
-                        <i class="fas fa-eye"></i>
-                    </button>
+
+    <!-- MAIN DASHBOARD -->
+    <div id="dashboard" class="hidden">
+        <!-- TOP NAV -->
+        <div class="top-nav">
+            <div class="nav-left">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="logo-mini">
+                    <div class="atom-mini"></div>
+                    <span>NEXUS</span>
+                </div>
+                <div class="model-select">
+                    <select id="aiModel">
+                        <option value="auto">🤖 AUTO AI</option>
+                        <option value="gemini">⭐ GEMINI</option>
+                        <option value="openai">⚡ GPT-4</option>
+                        <option value="claude">🧠 CLAUDE</option>
+                        <option value="local">💻 LOCAL</option>
+                    </select>
+                    <div class="status-dot online"></div>
                 </div>
             </div>
             
-            <div class="form-group">
-                <label class="form-label">
-                    <i class="fas fa-lock"></i> Confirm Key
-                </label>
-                <input type="password" id="regConfirm" class="form-input" placeholder="Re-enter password">
-            </div>
-            
-            <button class="btn btn-primary" id="registerBtn">
-                <i class="fas fa-atom"></i>
-                INITIATE QUANTUM SYNTHESIS
-            </button>
-            
-            <div class="footer">
-                <p>By creating an account, you agree to our Quantum Terms</p>
+            <div class="nav-right">
+                <button class="nav-btn" id="newChatBtn">
+                    <i class="fas fa-plus"></i> NEW
+                </button>
+                <button class="nav-btn" id="apiKeyBtn" title="API Keys">
+                    <i class="fas fa-key"></i>
+                </button>
+                <button class="nav-btn" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div class="user-dropdown">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                </div>
             </div>
         </div>
-    </div>
-    
-    <!-- ===== DASHBOARD ===== -->
-    <div id="dashboard">
-        <div class="dashboard-container">
-            <!-- Sidebar -->
-            <aside class="sidebar">
+
+        <!-- MAIN LAYOUT -->
+        <div class="main-layout">
+            <!-- SIDEBAR HISTORY -->
+            <div class="sidebar" id="sidebar">
                 <div class="sidebar-header">
-                    <h2 class="sidebar-title">
-                        <i class="fas fa-atom"></i>
-                        NEXUS AI
-                    </h2>
-                </div>
-                
-                <div class="user-profile">
-                    <div class="user-avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="user-info">
-                        <h4 id="dashboardUsername">Quantum User</h4>
-                        <p id="dashboardEmail">user@nexus.ai</p>
+                    <h3><i class="fas fa-history"></i> CHAT HISTORY</h3>
+                    <div class="history-filters">
+                        <button class="filter-btn active" data-filter="today">Today</button>
+                        <button class="filter-btn" data-filter="week">Week</button>
+                        <button class="filter-btn" data-filter="month">Month</button>
+                        <button class="filter-btn" data-filter="all">All</button>
                     </div>
                 </div>
                 
-                <nav class="nav-menu">
-                    <a href="#" class="nav-item active" data-page="chat">
-                        <i class="fas fa-comment"></i>
-                        <span>Quantum Chat</span>
-                    </a>
-                    <a href="#" class="nav-item" data-page="canvas">
-                        <i class="fas fa-code"></i>
-                        <span>Code Canvas</span>
-                    </a>
-                    <a href="#" class="nav-item" data-page="settings">
-                        <i class="fas fa-cog"></i>
-                        <span>Settings</span>
-                    </a>
-                    <a href="#" class="nav-item" data-page="keys">
-                        <i class="fas fa-key"></i>
-                        <span>API Keys</span>
-                    </a>
-                </nav>
+                <div class="history-search">
+                    <input type="text" placeholder="Search history..." id="historySearch">
+                    <i class="fas fa-search"></i>
+                </div>
                 
-                <div class="sidebar-footer">
-                    <button class="btn btn-secondary" id="logoutBtn">
-                        <i class="fas fa-sign-out-alt"></i>
-                        QUANTUM LOGOUT
+                <div class="history-list" id="historyList">
+                    <!-- Dynamic history items will be here -->
+                </div>
+                
+                <div class="storage-warning" id="storageWarning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>Storage: 85% used</span>
+                    <button class="clear-btn">Clear</button>
+                </div>
+                
+                <div class="google-integration">
+                    <div class="google-account">
+                        <img src="https://i.pravatar.cc/40" alt="Google">
+                        <div>
+                            <strong>Google User</strong>
+                            <small>user@gmail.com</small>
+                        </div>
+                    </div>
+                    <button class="sync-btn">
+                        <i class="fas fa-sync-alt"></i>
                     </button>
                 </div>
-            </aside>
-            
-            <!-- Main Content -->
-            <main class="main-content">
-                <!-- Top Bar -->
-                <div class="top-bar">
-                    <div class="model-selector">
-                        <select id="aiModel" class="model-select">
-                            <option value="auto">🤖 Auto Select</option>
-                            <option value="gemini">⭐ Google Gemini</option>
-                            <option value="openai">⚡ OpenAI GPT</option>
-                            <option value="claude">🧠 Claude AI</option>
-                            <option value="local">💻 Local LLM</option>
-                        </select>
-                        <div class="model-status">
-                            <span style="color: #00ffaa;">●</span> Online
+            </div>
+
+            <!-- CHAT CONTAINER -->
+            <div class="chat-container">
+                <!-- WELCOME SCREEN -->
+                <div class="welcome-screen" id="welcomeScreen">
+                    <div class="welcome-content">
+                        <div class="welcome-logo">
+                            <div class="atom-welcome"></div>
                         </div>
-                    </div>
-                    
-                    <div class="top-actions">
-                        <button class="action-btn" id="newChatBtn">
-                            <i class="fas fa-plus"></i> New Chat
-                        </button>
-                        <button class="action-btn" id="darkModeToggle">
-                            <i class="fas fa-moon"></i> Theme
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Chat Container -->
-                <div class="chat-container">
-                    <!-- Welcome Screen -->
-                    <div class="welcome-screen" id="welcomeScreen">
-                        <div class="welcome-content">
-                            <h1>Welcome to <span class="glow-text" style="color: var(--q-primary);">Nexus AI</span></h1>
-                            <p>Your Quantum Intelligence Assistant</p>
-                            
-                            <div class="quick-actions">
-                                <button class="quick-btn" data-prompt="Explain quantum computing in simple terms">
-                                    <i class="fas fa-atom"></i>
-                                    Quantum Computing
-                                </button>
-                                <button class="quick-btn" data-prompt="Write a Python script to analyze data">
-                                    <i class="fab fa-python"></i>
-                                    Python Code
-                                </button>
-                                <button class="quick-btn" data-prompt="Help me with my homework">
-                                    <i class="fas fa-graduation-cap"></i>
-                                    Homework Help
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Messages Container -->
-                    <div class="messages-container" id="messagesContainer">
-                        <!-- Messages will be added here -->
-                    </div>
-                    
-                    <!-- Input Area -->
-                    <div class="input-area">
-                        <div class="input-wrapper">
-                            <textarea 
-                                id="messageInput" 
-                                placeholder="Enter your quantum query... (Shift+Enter for new line, Enter to send)"
-                                rows="1"
-                            ></textarea>
-                            <button class="send-btn" id="sendMessageBtn">
-                                <i class="fas fa-paper-plane"></i>
+                        <h1>Welcome to <span class="neon-text">NEXUS AI</span></h1>
+                        <p>Your quantum-powered intelligence assistant</p>
+                        
+                        <div class="quick-actions">
+                            <button class="quick-btn" data-prompt="Explain quantum computing">
+                                <i class="fas fa-atom"></i> Quantum Physics
+                            </button>
+                            <button class="quick-btn" data-prompt="Write Python code">
+                                <i class="fab fa-python"></i> Code Assistant
+                            </button>
+                            <button class="quick-btn" data-prompt="Tell me a joke">
+                                <i class="fas fa-laugh"></i> Make me laugh
+                            </button>
+                            <button class="quick-btn" data-prompt="Help with homework">
+                                <i class="fas fa-graduation-cap"></i> Study Help
                             </button>
                         </div>
-                        <div class="typing-indicator" id="typingIndicator">
-                            <i class="fas fa-ellipsis-h"></i> Nexus AI is thinking...
+                        
+                        <div class="key-lock-info">
+                            <div class="lock-icon">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <p><strong>Key Lock Active</strong> - Chat restricted when storage exceeds 90%</p>
+                            <small>Current: <span id="storagePercent">85%</span></small>
                         </div>
                     </div>
                 </div>
-            </main>
-        </div>
-    </div>
 
-        
-    <!-- ===== ALL JAVASCRIPT IN ONE ===== -->
-    <script>
-        // ===== CONFIGURATION =====
-        const NEXUS_CONFIG = {
-            // 🎯 EDIT API KEYS DISINI:
-            GEMINI_API_KEY: "AIzaSyBiH7xdMUR7aXK8S1AWvuo1qJu2mqabI4g", // Dapetin: https://makersuite.google.com/app/apikey
-            OPENAI_API_KEY: "sk-proj-pLzNccYgL6bdFQZKatWx_#d660WICmGhaJGCVeN5bJeJ2fi5loc6rYXvOtjX7E1vF6M5IdpmQpuT3BlbkFJIpyp40GPHO5Kt4SM83CWlShPS9wxLgKsrzZcJi8141F3C0gEkXfMtLqtX_6xuZbgo-FVzl4EgA", // Dapetin: https://platform.openai.com/api-keys
-            CLAUDE_API_KEY: "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", // Dapetin: https://console.anthropic.com/
-            
-            // Local LLM (Install Ollama: https://ollama.ai/)
-            USE_LOCAL_LLM: false,
-            LOCAL_LLM_URL: "http://localhost:11434/v1",
-            
-            // Firebase (Optional)
-            FIREBASE: {
-             apiKey: "AIzaSyBK-MehTTzURY5jT5stH363Y5_WE4iy-XA",
-             authDomain: "volca-tools.firebaseapp.com",
-             projectId: "volca-tools",
-             storageBucket: "volca-tools.firebasestorage.app",
-             messagingSenderId: "262525907487",
-             appId: "1:262525907487:web:4abc37fa3b583223569b2a",
-             measurementId: "G-Q6W58HE2B3"
-        },
-            
-            // UI Settings
-            THEME: "dark",
-            PRIMARY_COLOR: "#ff0080",
-            SECONDARY_COLOR: "#00ffaa"
-        };
-        
-        // ===== GLOBAL VARIABLES =====
-        let currentUser = null;
-        let chatHistory = [];
-        let isTyping = false;
-        
-        // ===== DOM ELEMENTS =====
-        const elements = {
-            // Pages
-            loadingScreen: document.getElementById('loadingScreen'),
-            loginPage: document.getElementById('loginPage'),
-            registerPage: document.getElementById('registerPage'),
-            dashboard: document.getElementById('dashboard'),
-            
-            // Login
-            loginEmail: document.getElementById('loginEmail'),
-            loginPassword: document.getElementById('loginPassword'),
-            togglePassword: document.getElementById('togglePassword'),
-            loginBtn: document.getElementById('loginBtn'),
-            googleLoginBtn: document.getElementById('googleLoginBtn'),
-            showRegister: document.getElementById('showRegister'),
-            
-            // Register
-            backToLogin: document.getElementById('backToLogin'),
-            regName: document.getElementById('regName'),
-            regEmail: document.getElementById('regEmail'),
-            regPassword: document.getElementById('regPassword'),
-            regConfirm: document.getElementById('regConfirm'),
-            toggleRegPassword: document.getElementById('toggleRegPassword'),
-            registerBtn: document.getElementById('registerBtn'),
-            
-            // Dashboard
-            dashboardUsername: document.getElementById('dashboardUsername'),
-            dashboardEmail: document.getElementById('dashboardEmail'),
-            aiModel: document.getElementById('aiModel'),
-            newChatBtn: document.getElementById('newChatBtn'),
-            logoutBtn: document.getElementById('logoutBtn'),
-            welcomeScreen: document.getElementById('welcomeScreen'),
-            messagesContainer: document.getElementById('messagesContainer'),
-            messageInput: document.getElementById('messageInput'),
-            sendMessageBtn: document.getElementById('sendMessageBtn'),
-            typingIndicator: document.getElementById('typingIndicator')
-        };
-        
-        // ===== INITIALIZATION =====
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Nexus AI Initializing...');
-            
-            // Hide loading screen after 3 seconds
-            setTimeout(() => {
-                elements.loadingScreen.style.opacity = '0';
-                setTimeout(() => {
-                    elements.loadingScreen.style.display = 'none';
-                    showLoginPage();
-                }, 500);
-            }, 3000);
-            
-            // Setup event listeners
-            setupEventListeners();
-        });
-        
-        // ===== PAGE MANAGEMENT =====
-        function showLoginPage() {
-            hideAllPages();
-            elements.loginPage.style.display = 'block';
-            elements.loginEmail.focus();
-        }
-        
-        function showRegisterPage() {
-            hideAllPages();
-            elements.registerPage.style.display = 'block';
-            elements.regName.focus();
-        }
-        
-        function showDashboard() {
-            hideAllPages();
-            elements.dashboard.style.display = 'block';
-            
-            // Update user info
-            if (currentUser) {
-                elements.dashboardUsername.textContent = currentUser.name || 'Quantum User';
-                elements.dashboardEmail.textContent = currentUser.email || 'user@nexus.ai';
-            }
-            
-            // Focus on input
-            setTimeout(() => {
-                elements.messageInput.focus();
-            }, 500);
-        }
-        
-        function hideAllPages() {
-            elements.loginPage.style.display = 'none';
-            elements.registerPage.style.display = 'none';
-            elements.dashboard.style.display = 'none';
-        }
-        
-        // ===== EVENT LISTENERS =====
-        function setupEventListeners() {
-            // Password toggles
-            elements.togglePassword?.addEventListener('click', togglePasswordVisibility);
-            elements.toggleRegPassword?.addEventListener('click', toggleRegPasswordVisibility);
-            
-            // Navigation
-            elements.showRegister?.addEventListener('click', showRegisterPage);
-            elements.backToLogin?.addEventListener('click', showLoginPage);
-            
-            // Login
-            elements.loginBtn?.addEventListener('click', handleLogin);
-            elements.googleLoginBtn?.addEventListener('click', handleGoogleLogin);
-            
-            // Register
-            elements.registerBtn?.addEventListener('click', handleRegister);
-            
-            // Dashboard
-            elements.logoutBtn?.addEventListener('click', handleLogout);
-            elements.newChatBtn?.addEventListener('click', startNewChat);
-            elements.sendMessageBtn?.addEventListener('click', sendMessage);
-            
-            // Quick prompts
-            document.querySelectorAll('.quick-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const prompt = this.getAttribute('data-prompt');
-                    elements.messageInput.value = prompt;
-                    elements.messageInput.focus();
-                    elements.messageInput.style.height = 'auto';
-                    elements.messageInput.style.height = elements.messageInput.scrollHeight + 'px';
-                });
-            });
-            
-            // Message input
-            elements.messageInput?.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage();
-                }
-            });
-            
-            elements.messageInput?.addEventListener('input', function() {
-                this.style.height = 'auto';
-                this.style.height = (this.scrollHeight) + 'px';
-            });
-            
-            // Nav items
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    const page = this.getAttribute('data-page');
-                    showPage(page);
-                });
-            });
-        }
-        
-        function togglePasswordVisibility() {
-            const input = elements.loginPassword;
-            const icon = this.querySelector('i');
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.className = 'fas fa-eye-slash';
-            } else {
-                input.type = 'password';
-                icon.className = 'fas fa-eye';
-            }
-        }
-        
-        function toggleRegPasswordVisibility() {
-            const input = elements.regPassword;
-            const icon = this.querySelector('i');
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.className = 'fas fa-eye-slash';
-            } else {
-                input.type = 'password';
-                icon.className = 'fas fa-eye';
-            }
-        }
-        
-        // ===== AUTHENTICATION =====
-        function handleLogin() {
-            const email = elements.loginEmail.value.trim();
-            const password = elements.loginPassword.value;
-            
-            if (!email || !password) {
-                showNotification('Please enter email and password', 'error');
-                return;
-            }
-            
-            // Simulate login (in real app, connect to Firebase)
-            elements.loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> AUTHENTICATING...';
-            elements.loginBtn.disabled = true;
-            
-            setTimeout(() => {
-                currentUser = {
-                    name: email.split('@')[0],
-                    email: email
-                };
-                
-                showNotification('Quantum synchronization successful!', 'success');
-                showDashboard();
-                
-                elements.loginBtn.innerHTML = '<i class="fas fa-brain"></i> QUANTUM SYNCHRONIZATION';
-                elements.loginBtn.disabled = false;
-            }, 1500);
-        }
-        
-        function handleGoogleLogin() {
-            elements.googleLoginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> CONNECTING...';
-            elements.googleLoginBtn.disabled = true;
-            
-            setTimeout(() => {
-                currentUser = {
-                    name: 'Google User',
-                    email: 'user@gmail.com'
-                };
-                
-                showNotification('Google Quantum Link established!', 'success');
-                showDashboard();
-                
-                elements.googleLoginBtn.innerHTML = '<i class="fab fa-google"></i> CONTINUE WITH GOOGLE';
-                elements.googleLoginBtn.disabled = false;
-            }, 1500);
-        }
-        
-        function handleRegister() {
-            const name = elements.regName.value.trim();
-            const email = elements.regEmail.value.trim();
-            const password = elements.regPassword.value;
-            const confirm = elements.regConfirm.value;
-            
-            if (!name || !email || !password || !confirm) {
-                showNotification('Please fill all fields', 'error');
-                return;
-            }
-
-            if (password !== confirm) {
-                showNotification('Passwords do not match', 'error');
-                return;
-            }
-            
-            elements.registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> CREATING...';
-            elements.registerBtn.disabled = true;
-            
-            setTimeout(() => {
-                currentUser = { name, email };
-                showNotification('Quantum ID created successfully!', 'success');
-                showDashboard();
-                
-                elements.registerBtn.innerHTML = '<i class="fas fa-atom"></i> INITIATE QUANTUM SYNTHESIS';
-                elements.registerBtn.disabled = false;
-            }, 1500);
-        }
-        
-        function handleLogout() {
-            if (confirm('End quantum connection?')) {
-                currentUser = null;
-                chatHistory = [];
-                showLoginPage();
-                showNotification('Quantum connection terminated', 'info');
-            }
-        }
-        
-        // ===== CHAT SYSTEM =====
-        function startNewChat() {
-            if (chatHistory.length > 0 && !confirm('Start new chat? Current chat will be saved.')) {
-                return;
-            }
-            
-            chatHistory = [];
-            elements.messagesContainer.innerHTML = '';
-            elements.welcomeScreen.style.display = 'flex';
-            elements.messagesContainer.style.display = 'none';
-            elements.messageInput.value = '';
-            elements.messageInput.style.height = '50px';
-            
-            showNotification('New quantum chat started', 'info');
-        }
-        
-        function sendMessage() {
-            const message = elements.messageInput.value.trim();
-            if (!message || isTyping) return;
-            
-            // Hide welcome screen
-            elements.welcomeScreen.style.display = 'none';
-            elements.messagesContainer.style.display = 'flex';
-            
-            // Add user message
-            addMessage(message, 'user');
-            
-            // Clear input
-            elements.messageInput.value = '';
-            elements.messageInput.style.height = '50px';
-            
-            // Show typing indicator
-            isTyping = true;
-            elements.typingIndicator.style.display = 'block';
-            
-            // Simulate AI response (in real app, call API)
-            setTimeout(() => {
-                generateAIResponse(message);
-            }, 1000 + Math.random() * 1000);
-        }
-        
-        function addMessage(text, sender) {
-            const messageId = 'msg_' + Date.now();
-            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${sender}`;
-            messageDiv.id = messageId;
-            
-            const avatarIcon = sender === 'user' ? 'fa-user' : 'fa-robot';
-            const avatarColor = sender === 'user' ? 'var(--q-primary)' : 'var(--q-accent)';
-            
-            messageDiv.innerHTML = `
-                <div class="message-avatar" style="background: ${avatarColor};">
-                    <i class="fas ${avatarIcon}"></i>
+                <!-- CHAT MESSAGES -->
+                <div class="messages-container" id="messagesContainer">
+                    <!-- Messages appear here -->
                 </div>
-                <div class="message-content">
-                    <div class="message-header">
-                        <span>${sender === 'user' ? 'You' : 'Nexus AI'}</span>
-                        <span>${time}</span>
+
+                <!-- CHAT INPUT -->
+                <div class="chat-input-area">
+                    <!-- KEY LOCK WARNING -->
+                    <div class="key-lock-warning hidden" id="keyLockWarning">
+                        <div class="lock-message">
+                            <i class="fas fa-ban"></i>
+                            <span>SORRY ACCESS NO PUBLISH</span>
+                            <small>Storage limit exceeded. Clear history or upgrade.</small>
+                        </div>
                     </div>
-                    <div class="message-text">${formatMessage(text)}</div>
-                    <div style="margin-top: 10px; display: flex; gap: 10px;">
-                        <button onclick="copyMessage('${messageId}')" style="background: none; border: none; color: var(--q-text-muted); cursor: pointer;">
-                            <i class="fas fa-copy"></i>
+                    
+                    <div class="input-tools">
+                        <button class="tool-btn" id="audioRecordBtn" title="Voice Input">
+                            <i class="fas fa-microphone"></i>
                         </button>
-                        ${sender === 'ai' ? `
-                        <button onclick="regenerateMessage('${messageId}')" style="background: none; border: none; color: var(--q-text-muted); cursor: pointer;">
+                        <button class="tool-btn" id="fileUploadBtn" title="Upload Image">
+                            <i class="fas fa-image"></i>
+                        </button>
+                        <button class="tool-btn" id="codeCanvasBtn" title="Code Canvas">
+                            <i class="fas fa-code"></i>
+                        </button>
+                        <button class="tool-btn" id="settingsChatBtn" title="Chat Settings">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="input-wrapper">
+                        <textarea 
+                            id="messageInput" 
+                            placeholder="Type your message here... (Shift+Enter for new line)" 
+                            rows="1"
+                        ></textarea>
+                        <button class="send-btn" id="sendBtn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="input-actions">
+                        <span class="char-count">0/2000</span>
+                        <label class="swear-filter">
+                            <input type="checkbox" id="swearFilter" checked>
+                            <span>Auto-filter swear words</span>
+                        </label>
+                    </div>
+                    
+                    <div class="typing-indicator hidden" id="typingIndicator">
+                        <div class="typing-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                        <span>Nexus AI is thinking...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT SETTINGS PANEL -->
+            <div class="settings-panel" id="settingsPanel">
+                <div class="panel-header">
+                    <h3><i class="fas fa-sliders-h"></i> CHAT SETTINGS</h3>
+                    <button class="close-panel"><i class="fas fa-times"></i></button>
+                </div>
+                
+                <div class="panel-content">
+                    <div class="setting-group">
+                        <h4><i class="fas fa-palette"></i> APPEARANCE</h4>
+                        <div class="theme-options">
+                            <label class="theme-option active">
+                                <div class="theme-preview neon-theme"></div>
+                                <span>Neon Red/Blue</span>
+                            </label>
+                            <label class="theme-option">
+                                <div class="theme-preview dark-theme"></div>
+                                <span>Deep Space</span>
+                            </label>
+                            <label class="theme-option">
+                                <div class="theme-preview matrix-theme"></div>
+                                <span>Matrix</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-group">
+                        <h4><i class="fas fa-robot"></i> AI PERSONALITY</h4>
+                        <select class="personality-select">
+                            <option>🤖 Professional</option>
+                            <option>😎 Cool & Casual</option>
+                            <option>😂 Funny & Humorous</option>
+                            <option>😡 Sassy & Bold</option>
+                            <option>🤓 Nerdy & Detailed</option>
+                        </select>
+                    </div>
+                    
+                    <div class="setting-group">
+                        <h4><i class="fas fa-language"></i> RESPONSE STYLE</h4>
+                        <label class="checkbox">
+                            <input type="checkbox" checked>
+                            <span>Use emojis</span>
+                        </label>
+                        <label class="checkbox">
+                            <input type="checkbox">
+                            <span>Formal language</span>
+                        </label>
+                        <label class="checkbox">
+                            <input type="checkbox" checked>
+                            <span>Detailed explanations</span>
+                        </label>
+                    </div>
+                    
+                    <div class="setting-group">
+                        <h4><i class="fas fa-bell"></i> NOTIFICATIONS</h4>
+                        <label class="checkbox">
+                            <input type="checkbox" checked>
+                            <span>Message sounds</span>
+                        </label>
+                        <label class="checkbox">
+                            <input type="checkbox">
+                            <span>Desktop notifications</span>
+                        </label>
+                    </div>
+                    
+                    <button class="btn save-btn">
+                        <i class="fas fa-save"></i> SAVE SETTINGS
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CANVAS MODAL -->
+        <div class="canvas-modal hidden" id="canvasModal">
+            <div class="canvas-header">
+                <h3><i class="fas fa-code"></i> CODE CANVAS</h3>
+                <div class="canvas-tools">
+                    <button class="canvas-btn" id="runCode">
+                        <i class="fas fa-play"></i> Run
+                    </button>
+                    <button class="canvas-btn" id="clearCode">
+                        <i class="fas fa-trash"></i> Clear
+                    </button>
+                    <button class="canvas-btn" id="copyAllCode">
+                        <i class="fas fa-copy"></i> Copy All
+                    </button>
+                    <button class="canvas-btn close-canvas">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="canvas-body">
+                <div class="code-editor">
+                    <div class="editor-header">
+                        <select id="codeLanguage">
+                            <option>html</option>
+                            <option>javascript</option>
+                            <option>python</option>
+                            <option>css</option>
+                            <option>php</option>
+                        </select>
+                        <span class="file-name">canvas.html</span>
+                    </div>
+                    <textarea id="codeEditor" spellcheck="false"></textarea>
+                </div>
+                
+                <div class="code-preview">
+                    <div class="preview-header">
+                        <span>LIVE PREVIEW</span>
+                        <button class="refresh-preview">
                             <i class="fas fa-redo"></i>
                         </button>
-                        ` : ''}
                     </div>
+                    <iframe id="previewFrame"></iframe>
                 </div>
-            `;
-            
-            elements.messagesContainer.appendChild(messageDiv);
-            elements.messagesContainer.scrollTop = elements.messagesContainer.scrollHeight;
-            
-            // Save to history
-            chatHistory.push({
-                id: messageId,
-                text: text,
-                sender: sender,
-                time: time
-            });
-        }
-        
-        function formatMessage(text) {
-            // Simple formatting
-            return text
-                .replace(/\n/g, '<br>')
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                .replace(/`([^`]+)`/g, '<code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;">$1</code>');
-        }
-        
-        function generateAIResponse(userMessage) {
-            const model = elements.aiModel.value;
-            
-            // Sample responses based on model
-            const responses = {
-                gemini: `Halo! Saya Gemini dari Google AI. Anda bertanya: "${userMessage}"
                 
-Saya bisa membantu dengan berbagai hal seperti:
-• Pemrograman dan debugging
-• Analisis data
-• Penulisan kreatif
-• Penjelasan konsep teknis
-
-Ada yang spesifik yang ingin Anda tanyakan? 🤖`,
-                
-                openai: `Hello! I'm GPT from OpenAI. You asked: "${userMessage}"
-                
-I can assist you with:
-• Code generation in multiple languages
-• Problem solving and analysis
-• Creative writing and content generation
-• Learning and explanations
-
-How can I help you today? 🚀`,
-                
-                claude: `Greetings! I'm Claude from Anthropic. Regarding: "${userMessage}"
-                
-As an AI assistant focused on safety and helpfulness, I can:
-• Provide detailed explanations
-• Help with research and analysis
-• Assist with writing and editing
-• Answer questions accurately
-
-What would you like to explore? 🧠`,
-                
-                local: `Yo! I'm running locally on your machine. You said: "${userMessage}"
-                
-Local LLM advantages:
-• 100% private - no data leaves your computer
-• Completely free to use
-• Works offline
-• Customizable
-
-The future is decentralized! 💻`,
-                
-                auto: `🔥 NEXUS AI RESPONSE 🔥
-Question: "${userMessage}"
-                
-As your Quantum Intelligence Assistant, I can help with:
-1. **Coding & Development** - Any language, any framework
-2. **Data Analysis** - CSV, JSON, SQL, visualizations
-3. **Content Creation** - Articles, stories, marketing copy
-4. **Learning & Research** - Explanations, summaries, tutorials
-5. **Problem Solving** - Logic, math, business strategies
-
-Which area would you like to focus on? 🎯`
-            };
-            
-            const response = responses[model] || responses.auto;
-            
-            // Add AI message
-            addMessage(response, 'ai');
-            
-            // Hide typing indicator
-            isTyping = false;
-            elements.typingIndicator.style.display = 'none';
-        }
-        
-        // ===== UTILITY FUNCTIONS =====
-        function copyMessage(messageId) {
-            const messageDiv = document.getElementById(messageId);
-            if (!messageDiv) return;
-            
-            const messageText = messageDiv.querySelector('.message-text').textContent;
-            
-            navigator.clipboard.writeText(messageText).then(() => {
-                showNotification('Message copied to clipboard', 'success');
-            });
-        }
-        
-        function regenerateMessage(messageId) {
-            // Find and regenerate the last AI message
-            const aiMessages = chatHistory.filter(m => m.sender === 'ai');
-            if (aiMessages.length > 0) {
-                const lastAiMessage = aiMessages[aiMessages.length - 1];
-                const userMessage = chatHistory[chatHistory.length - 2]; // Message before AI
-                
-                if (userMessage && userMessage.sender === 'user') {
-                    // Remove both messages
-                    document.getElementById(lastAiMessage.id)?.remove();
-                    document.getElementById(userMessage.id)?.remove();
-                    
-                    // Remove from history
-                    chatHistory = chatHistory.filter(m => 
-                        m.id !== lastAiMessage.id && m.id !== userMessage.id
-                    );
-                    
-                    // Regenerate
-                    addMessage(userMessage.text, 'user');
-                    
-                    isTyping = true;
-                    elements.typingIndicator.style.display = 'block';
-                    
-                    setTimeout(() => {
-                        generateAIResponse(userMessage.text);
-                    }, 1000);
-                }
-            }
-        }
-        
-        function showNotification(message, type = 'info') {
-            // Create notification element
-            const notification = document.createElement('div');
-            notification.textContent = message;
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                padding: 15px 25px;
-                background: ${type === 'error' ? '#ef4444' : 
-                           type === 'success' ? '#10b981' : 
-                           type === 'warning' ? '#f59e0b' : 
-                           'var(--q-accent)'};
-                color: white;
-                border-radius: 10px;
-                z-index: 10000;
-                animation: slideIn 0.3s ease;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            `;
-            
-            document.body.appendChild(notification);
-            
-            // Remove after 3 seconds
-            setTimeout(() => {
-                notification.style.animation = 'slideOut 0.3s ease';
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
-            
-            // Add animation styles if not exists
-            if (!document.querySelector('#notification-styles')) {
-                const style = document.createElement('style');
-                style.id = 'notification-styles';
-                style.textContent = `
-                    @keyframes slideIn {
-                        from { transform: translateX(100%); opacity: 0; }
-                        to { transform: translateX(0); opacity: 1; }
-                    }
-                    @keyframes slideOut {
-                        from { transform: translateX(0); opacity: 1; }
-                        to { transform: translateX(100%); opacity: 0; }
-                    }
-                `;
-                document.head.appendChild(style);
-            }
-        }
-        
-        function showPage(page) {
-            // Hide all pages
-            document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-            
-            // Show selected page
-            const pageElement = document.getElementById(page + 'Page');
-            if (pageElement) {
-                pageElement.style.display = 'block';
-            }
-            
-            // Update welcome message for chat page
-            if (page === 'chat') {
-                elements.welcomeScreen.style.display = 'flex';
-                elements.messagesContainer.style.display = 'none';
-            }
-        }
-        
-        // ===== API CONFIGURATION HELPER =====
-        function showAPIConfig() {
-            const configHTML = `
-                <div style="
-                    position: fixed;
-                    top: 0; left: 0;
-                    width: 100%; height: 100%;
-                    background: rgba(0,0,0,0.8);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    z-index: 10000;
-                ">
-                    <div style="
-                        background: var(--q-card);
-                        padding: 30px;
-                        border-radius: 15px;
-                        max-width: 600px;
-                        width: 90%;
-                        max-height: 80vh;
-                        overflow-y: auto;
-                    ">
-                        <h2 style="margin-bottom: 20px; color: var(--q-primary);">
-                            <i class="fas fa-key"></i> API Configuration
-                        </h2>
-                        
-                        <div style="margin-bottom: 20px;">
-                            <h4>Google Gemini</h4>
-                            <input type="text" placeholder="AIzaSy..." style="width: 100%; padding: 10px; margin: 5px 0;">
-                            <small>Get free key: <a href="https://makersuite.google.com/app/apikey" target="_blank">Google AI Studio</a></small>
-                        </div>
-                        
-                        <div style="margin-bottom: 20px;">
-                            <h4>OpenAI</h4>
-                            <input type="text" placeholder="sk-proj-..." style="width: 100%; padding: 10px; margin: 5px 0;">
-                            <small>Get $5 free: <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI Platform</a></small>
-                        </div>
-                        
-                        <div style="display: flex; gap: 10px; margin-top: 30px;">
-                            <button onclick="this.parentElement.parentElement.parentElement.remove()" style="
-                                padding: 10px 20px;
-                                background: var(--q-accent);
-                                border: none;
-                                border-radius: 8px;
-                                color: white;
-                                cursor: pointer;
-                            ">
-                                Save Configuration
-                            </button>
-                            <button onclick="this.parentElement.parentElement.parentElement.remove()" style="
-                                padding: 10px 20px;
-                                background: transparent;
-                                border: 1px solid var(--q-accent);
-                                border-radius: 8px;
-                                color: var(--q-text);
-                                cursor: pointer;
-                            ">
-                                Cancel
-                            </button>
-                        </div>
+                <div class="code-console">
+                    <div class="console-header">
+                        <span><i class="fas fa-terminal"></i> CONSOLE & ERRORS</span>
+                        <button class="clear-console">
+                            <i class="fas fa-broom"></i>
+                        </button>
                     </div>
+                    <div id="consoleOutput"></div>
                 </div>
-            `;
+            </div>
+        </div>
+
+        <!-- API KEYS MODAL -->
+        <div class="api-modal hidden" id="apiModal">
+            <div class="api-header">
+                <h3><i class="fas fa-key"></i> API KEYS CONFIGURATION</h3>
+                <button class="close-api"><i class="fas fa-times"></i></button>
+            </div>
             
-            const div = document.createElement('div');
-            div.innerHTML = configHTML;
-            document.body.appendChild(div);
-        }
-        
-        // Make functions globally available
-        window.copyMessage = copyMessage;
-        window.regenerateMessage = regenerateMessage;
-        window.showAPIConfig = showAPIConfig;
-        
-        console.log('✅ Nexus AI v10.0 Ready!');
-        console.log('🎯 Add your API keys in the NEXUS_CONFIG object');
-        console.log('🚀 Powered by VOLCA v10.0');
-    </script>
+            <div class="api-body">
+                <div class="api-section">
+                    <h4><i class="fab fa-google"></i> GOOGLE GEMINI</h4>
+                    <div class="api-input-group">
+                        <input type="password" id="geminiKey" placeholder="AIzaSyBiH7xdMUR7aXK8S1AWvuo1qJu2mqabI4g">
+                        <button class="api-action-btn">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="api-action-btn test-btn">
+                            <i class="fas fa-check"></i> Test
+                        </button>
+                    </div>
+                    <small class="api-status" id="geminiStatus">❌ Not configured</small>
+                    <a href="https://makersuite.google.com/app/apikey" target="_blank" class="api-link">
+                        <i class="fas fa-external-link-alt"></i> Get free API key
+                    </a>
+                </div>
+                
+                <div class="api-section">
+                    <h4><i class="fas fa-bolt"></i> OPENAI GPT</h4>
+                    <div class="api-input-group">
+                        <input type="password" id="openaiKey" placeholder="sk-proj-pLzNccYgL6bdFQZKatWx_#d660WICmGhaJGCVeN5bJeJ2fi5loc6rYXvOtjX7E1vF6M5IdpmQpuT3BlbkFJIpyp40GPHO5Kt4SM83CWlShPS9wxLgKsrzZcJi8141F3C0gEkXfMtLqtX_6xuZbgo-FVzl4EgA">
+                        <button class="api-action-btn">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="api-action-btn test-btn">
+                            <i class="fas fa-check"></i> Test
+                        </button>
+                    </div>
+                    <small class="api-status" id="openaiStatus">❌ Not configured</small>
+                    <a href="https://platform.openai.com/api-keys" target="_blank" class="api-link">
+                        <i class="fas fa-external-link-alt"></i> Get $5 free credit
+                    </a>
+                </div>
+                
+                <div class="api-section">
+                    <h4><i class="fas fa-brain"></i> ANTHROPIC CLAUDE</h4>
+                    <div class="api-input-group">
+                        <input type="password" id="claudeKey" placeholder="sk-ant-...">
+                        <button class="api-action-btn">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="api-action-btn test-btn">
+                            <i class="fas fa-check"></i> Test
+                        </button>
+                    </div>
+                    <small class="api-status" id="claudeStatus">❌ Not configured</small>
+                </div>
+                
+                <div class="api-section">
+                    <h4><i class="fas fa-server"></i> LOCAL LLM</h4>
+                    <div class="api-input-group">
+                        <input type="text" id="localUrl" placeholder="http://localhost:11434">
+                        <button class="api-action-btn test-btn">
+                            <i class="fas fa-plug"></i> Connect
+                        </button>
+                    </div>
+                    <small class="api-info">
+                        <i class="fas fa-info-circle"></i> Install Ollama first: https://ollama.ai/
+                    </small>
+                </div>
+                
+                <div class="api-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p><strong>API KEY EXPIRY NOTIFICATION</strong></p>
+                    <p>When tokens expire: "NEXUS AI CANNOT BE ACCESSED - Please update API key"</p>
+                </div>
+                
+                <button class="btn save-api-btn">
+                    <i class="fas fa-save"></i> SAVE ALL KEYS
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FIREBASE & AUDIO RECORDER SCRIPTS -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
-    
+
+      

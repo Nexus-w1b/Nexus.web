@@ -1,19 +1,704 @@
-
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus AI</title>
-    <link rel="stylesheet" href="css/nexus-styles.css">
-    <link rel="stylesheet" href="css/nexus-animations.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" type="image/svg+xml" href="assets/logo-atom.svg">
-</head>
-<body class="nexus-login-page">
+    <title> NEXUS AI - VOLCA EDITION </title>
     
-    <div id="quantumLoader" class="quantum-loader">
-        <div class="quantum-sphere">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* Quantum Colors */
+            --q-primary: #ff0080;
+            --q-secondary: #00ffaa;
+            --q-accent: #8b5cf6;
+            --q-dark: #0a0a1a;
+            --q-darker: #050510;
+            --q-card: rgba(20, 20, 40, 0.9);
+            --q-text: #ffffff;
+            --q-text-muted: #b0b0ff;
+        }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--q-darker);
+            color: var(--q-text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* ===== LOADING SCREEN ===== */
+        #loadingScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #050510 0%, #0a0a1a 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        
+        .quantum-loader {
+            width: 200px;
+            height: 200px;
+            position: relative;
+            margin-bottom: 30px;
+        }
+        
+        .atom {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+        }
+        
+        .nucleus {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 30px;
+            background: var(--q-primary);
+            border-radius: 50%;
+            box-shadow: 0 0 30px var(--q-primary);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.2); }
+        }
+        
+        .orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            border: 2px solid var(--q-accent);
+            border-radius: 50%;
+            opacity: 0.5;
+        }
+        
+        .orbit-1 {
+            width: 120px;
+            height: 120px;
+            animation: spin 10s linear infinite;
+        }
+        
+        .orbit-2 {
+            width: 160px;
+            height: 160px;
+            animation: spin 15s linear infinite reverse;
+        }
+        
+        .orbit-3 {
+            width: 200px;
+            height: 200px;
+            animation: spin 20s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        .electron {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            width: 15px;
+            height: 15px;
+            background: var(--q-secondary);
+            border-radius: 50%;
+            box-shadow: 0 0 15px var(--q-secondary);
+        }
+        
+        .loading-text {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--q-secondary);
+            margin-bottom: 20px;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+        
+        .loading-subtext {
+            color: var(--q-text-muted);
+            margin-bottom: 30px;
+        }
+        
+        .progress-bar {
+            width: 300px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--q-primary), var(--q-accent));
+            width: 0%;
+            animation: loading 2s ease-in-out infinite;
+        }
+        
+        @keyframes loading {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+        
+        /* ===== LOGIN PAGE ===== */
+        #loginPage {
+            display: none;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .login-container {
+            max-width: 500px;
+            margin: 50px auto;
+            background: var(--q-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.8s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .logo-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .logo-title {
+            font-size: 48px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--q-primary), var(--q-secondary), var(--q-accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .logo-subtitle {
+            color: var(--q-text-muted);
+            letter-spacing: 3px;
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--q-text-muted);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            color: var(--q-text);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--q-primary);
+            box-shadow: 0 0 0 3px rgba(255, 0, 128, 0.2);
+        }
+        
+        .password-wrapper {
+            position: relative;
+        }
+        
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--q-text-muted);
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        .btn {
+            position: relative;
+            padding: 18px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--q-primary), var(--q-accent));
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 0, 128, 0.3);
+        }
+        
+        .btn-secondary {
+            background: var(--q-card);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            color: var(--q-text);
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+            color: var(--q-text-muted);
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.3), transparent);
+        }
+        
+        .divider span {
+            padding: 0 20px;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(139, 92, 246, 0.3);
+            text-align: center;
+            font-size: 12px;
+            color: var(--q-text-muted);
+        }
+        
+        .link {
+            color: var(--q-secondary);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .link:hover {
+            text-decoration: underline;
+        }
+        
+        /* ===== DASHBOARD ===== */
+        #dashboard {
+            display: none;
+            min-height: 100vh;
+        }
+        
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 280px;
+            background: var(--q-dark);
+            border-right: 1px solid rgba(139, 92, 246, 0.3);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-header {
+            padding: 25px 20px;
+            border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        
+        .sidebar-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--q-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-profile {
+            padding: 20px;
+            border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--q-accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .user-info h4 {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+        
+        .user-info p {
+            font-size: 13px;
+            color: var(--q-text-muted);
+        }
+        
+        .nav-menu {
+            padding: 20px;
+            flex: 1;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            color: var(--q-text);
+            text-decoration: none;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-item:hover {
+            background: rgba(139, 92, 246, 0.1);
+        }
+        
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(255, 0, 128, 0.2), rgba(139, 92, 246, 0.2));
+            color: var(--q-primary);
+        }
+        
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background: var(--q-darker);
+        }
+        
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        
+        .model-selector {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .model-select {
+            padding: 10px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 10px;
+            color: var(--q-text);
+            font-size: 14px;
+            min-width: 200px;
+        }
+        
+        .top-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            padding: 10px 20px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 10px;
+            color: var(--q-text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .chat-container {
+            max-width: 900px;
+            margin: 0 auto;
+            height: calc(100vh - 150px);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .welcome-screen {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .welcome-content h1 {
+            font-size: 36px;
+            margin-bottom: 15px;
+            color: var(--q-primary);
+        }
+        
+        .welcome-content p {
+            color: var(--q-text-muted);
+            margin-bottom: 30px;
+        }
+        
+        .quick-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .quick-btn {
+            padding: 15px 25px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 10px;
+            color: var(--q-text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .quick-btn:hover {
+            background: rgba(139, 92, 246, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: rgba(10, 10, 26, 0.5);
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .message {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .message.user {
+            flex-direction: row-reverse;
+        }
+        
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--q-accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        
+        .message.user .message-avatar {
+            background: var(--q-primary);
+        }
+        
+        .message-content {
+            max-width: 70%;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 15px;
+            padding: 15px;
+        }
+        
+        .message.user .message-content {
+            background: linear-gradient(135deg, rgba(255, 0, 128, 0.1), rgba(139, 92, 246, 0.1));
+            border-color: rgba(255, 0, 128, 0.3);
+        }
+        
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: var(--q-text-muted);
+        }
+        
+        .message-text {
+            line-height: 1.6;
+        }
+        
+        .input-area {
+            margin-top: 20px;
+        }
+        
+        .input-wrapper {
+            display: flex;
+            gap: 10px;
+        }
+        
+        #messageInput {
+            flex: 1;
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            color: var(--q-text);
+            font-size: 16px;
+            resize: none;
+            min-height: 50px;
+            max-height: 200px;
+            font-family: inherit;
+        }
+        
+        #messageInput:focus {
+            outline: none;
+            border-color: var(--q-primary);
+        }
+        
+        .send-btn {
+            padding: 0 30px;
+            background: linear-gradient(135deg, var(--q-primary), var(--q-accent));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .typing-indicator {
+            display: none;
+            padding: 10px;
+            color: var(--q-secondary);
+            font-size: 14px;
+        }
+        
+        /* ===== REGISTER PAGE ===== */
+        #registerPage {
+            display: none;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+            
+            .login-container {
+                margin: 20px;
+                padding: 30px;
+            }
+            
+            .logo-title {
+                font-size: 36px;
+            }
+            
+            .quick-actions {
+                flex-direction: column;
+            }
+        }
+        
+        /* ===== UTILITY CLASSES ===== */
+        .hidden {
+            display: none !important;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .mb-10 { margin-bottom: 10px; }
+        .mb-20 { margin-bottom: 20px; }
+        .mb-30 { margin-bottom: 30px; }
+        
+        .glow-text {
+            text-shadow: 0 0 10px currentColor;
+        }
+        
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--q-primary), var(--q-accent));
+            border-radius: 4px;
+        }
+    </style>
+
+        <!-- FONT AWESOME CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- ===== LOADING SCREEN ===== -->
+    <div id="loadingScreen">
+        <div class="quantum-loader">
             <div class="atom">
                 <div class="nucleus"></div>
                 <div class="orbit orbit-1">
@@ -27,165 +712,889 @@
                 </div>
             </div>
         </div>
-        <p class="loading-text">INITIALIZING NEXUS AI QUANTUM CORE...</p>
-        <div class="loading-progress">
-            <div class="progress-bar" id="quantumProgress"></div>
+        <h2 class="loading-text"> NEXUS AI </h2>
+        <p class="loading-subtext">Initializing Quantum Intelligence Core...</p>
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
         </div>
     </div>
-
-    <div class="nexus-container" style="display: none;">
-        <div class="universe-background" id="universeCanvas"></div>
-        
-        <div class="nexus-login-card">
-            <div class="nexus-logo-header">
-                <div class="atom-logo">
-                    <div class="atom-spin">
-                        <div class="nucleus-glow"></div>
-                        <div class="electron-ring ring-1"></div>
-                        <div class="electron-ring ring-2"></div>
-                        <div class="electron-ring ring-3"></div>
-                    </div>
-                </div>
-                <h1 class="nexus-title">NEXUS <span class="ai-text">AI</span></h1>
-                <p class="nexus-subtitle">Quantum Intelligence Platform</p>
+    
+    <!-- ===== LOGIN PAGE ===== -->
+    <div id="loginPage">
+        <div class="login-container">
+            <div class="logo-header">
+                <h1 class="logo-title">NEXUS AI</h1>
+                <p class="logo-subtitle">QUANTUM INTELLIGENCE PLATFORM</p>
             </div>
-
-            <!-- Login Form -->
-            <div class="login-form-container">
-                <h2><i class="fas fa-sign-in-alt"></i> ACCESS QUANTUM CORE</h2>
-                
-                <div class="form-group nexus-input-group">
-                    <label for="loginEmail"><i class="fas fa-envelope"></i> Quantum ID</label>
-                    <input type="email" id="loginEmail" placeholder="nexus@quantum.ai" autocomplete="off">
-                    <div class="input-glow"></div>
-                </div>
-                
-                <div class="form-group nexus-input-group">
-                    <label for="loginPassword"><i class="fas fa-lock"></i> Encryption Key</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="loginPassword" placeholder="••••••••••">
-                        <button type="button" class="password-toggle" id="togglePassword">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                    <div class="input-glow"></div>
-                    <div class="password-strength" id="passwordStrength">
-                        <div class="strength-bar"></div>
-                        <span class="strength-text">Security Level: Low</span>
-                    </div>
-                </div>
-
-                <button class="nexus-btn login-btn" id="nexusLoginBtn">
-                    <i class="fas fa-brain"></i>
-                    <span>QUANTUM SYNCHRONIZATION</span>
-                    <div class="btn-glow"></div>
-                </button>
-
-                <div class="divider">
-                    <span>OR</span>
-                </div>
-
-                <button class="nexus-btn google-btn" id="googleLoginBtn">
-                    <img src="https://www.google.com/favicon.ico" alt="Google">
-                    <span>CONTINUE WITH GOOGLE</span>
-                </button>
-
-                <div class="register-section">
-                    <p>No quantum signature detected?</p>
-                    <button class="register-link" id="showRegisterBtn">
-                        <i class="fas fa-user-plus"></i> CREATE NEXUS ID
+            
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-envelope"></i> Quantum ID
+                </label>
+                <input type="email" id="loginEmail" class="form-input" placeholder="user@nexus.ai">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-lock"></i> Encryption Key
+                </label>
+                <div class="password-wrapper">
+                    <input type="password" id="loginPassword" class="form-input" placeholder="••••••••">
+                    <button type="button" class="toggle-password" id="togglePassword">
+                        <i class="fas fa-eye"></i>
                     </button>
                 </div>
             </div>
-
-            <!-- Security Footer -->
-            <div class="nexus-footer">
-                <div class="security-badge">
-                    <i class="fas fa-shield-alt"></i>
-                    <span>ENCRYPTION: AES-256-GCM | QUANTUM-SAFE</span>
-                </div>
-                <div class="version-info">
-                    <span>NEXUS AI | VOLCA MODIFIED EDITION</span>
-                    <span class="access-key" id="accessKeyDisplay">ACCESS: PUBLIC BETA</span>
-                </div>
+            
+            <button class="btn btn-primary" id="loginBtn">
+                <i class="fas fa-brain"></i>
+                QUANTUM SYNCHRONIZATION
+            </button>
+            
+            <div class="divider">
+                <span>OR</span>
+            </div>
+            
+            <button class="btn btn-secondary" id="googleLoginBtn">
+                <i class="fab fa-google"></i>
+                CONTINUE WITH GOOGLE
+            </button>
+            
+            <p class="text-center mb-20">
+                No quantum signature detected?
+                <a class="link" id="showRegister">CREATE NEXUS ID</a>
+            </p>
+            
+            <div class="footer">
+                <p>ENCRYPTION: QUANTUM-SAFE AES-256-GCM</p>
+                <p>NEXUS CORE | VOLCA MODIFIED EDITION</p>
             </div>
         </div>
-
-        <!-- Status Messages -->
-        <div id="nexusStatus" class="status-message">
-            <i class="fas fa-info-circle"></i>
-            <span id="statusText">Quantum core ready</span>
+    </div>
+    
+    <!-- ===== REGISTER PAGE ===== -->
+    <div id="registerPage">
+        <div class="login-container">
+            <button class="btn btn-secondary mb-20" id="backToLogin">
+                <i class="fas fa-arrow-left"></i>
+                BACK TO LOGIN
+            </button>
+            
+            <div class="logo-header">
+                <h1 class="logo-title">CREATE NEXUS ID</h1>
+                <p class="logo-subtitle">JOIN THE QUANTUM NETWORK</p>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-user"></i> Quantum Alias
+                </label>
+                <input type="text" id="regName" class="form-input" placeholder="Enter your name">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-envelope"></i> Quantum ID
+                </label>
+                <input type="email" id="regEmail" class="form-input" placeholder="nexus@quantum.ai">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-lock"></i> Encryption Key
+                </label>
+                <div class="password-wrapper">
+                    <input type="password" id="regPassword" class="form-input" placeholder="Create strong password">
+                    <button type="button" class="toggle-password" id="toggleRegPassword">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-lock"></i> Confirm Key
+                </label>
+                <input type="password" id="regConfirm" class="form-input" placeholder="Re-enter password">
+            </div>
+            
+            <button class="btn btn-primary" id="registerBtn">
+                <i class="fas fa-atom"></i>
+                INITIATE QUANTUM SYNTHESIS
+            </button>
+            
+            <div class="footer">
+                <p>By creating an account, you agree to our Quantum Terms</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ===== DASHBOARD ===== -->
+    <div id="dashboard">
+        <div class="dashboard-container">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <h2 class="sidebar-title">
+                        <i class="fas fa-atom"></i>
+                        NEXUS AI
+                    </h2>
+                </div>
+                
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-info">
+                        <h4 id="dashboardUsername">Quantum User</h4>
+                        <p id="dashboardEmail">user@nexus.ai</p>
+                    </div>
+                </div>
+                
+                <nav class="nav-menu">
+                    <a href="#" class="nav-item active" data-page="chat">
+                        <i class="fas fa-comment"></i>
+                        <span>Quantum Chat</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="canvas">
+                        <i class="fas fa-code"></i>
+                        <span>Code Canvas</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="keys">
+                        <i class="fas fa-key"></i>
+                        <span>API Keys</span>
+                    </a>
+                </nav>
+                
+                <div class="sidebar-footer">
+                    <button class="btn btn-secondary" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        QUANTUM LOGOUT
+                    </button>
+                </div>
+            </aside>
+            
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Top Bar -->
+                <div class="top-bar">
+                    <div class="model-selector">
+                        <select id="aiModel" class="model-select">
+                            <option value="auto">🤖 Auto Select</option>
+                            <option value="gemini">⭐ Google Gemini</option>
+                            <option value="openai">⚡ OpenAI GPT</option>
+                            <option value="claude">🧠 Claude AI</option>
+                            <option value="local">💻 Local LLM</option>
+                        </select>
+                        <div class="model-status">
+                            <span style="color: #00ffaa;">●</span> Online
+                        </div>
+                    </div>
+                    
+                    <div class="top-actions">
+                        <button class="action-btn" id="newChatBtn">
+                            <i class="fas fa-plus"></i> New Chat
+                        </button>
+                        <button class="action-btn" id="darkModeToggle">
+                            <i class="fas fa-moon"></i> Theme
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Chat Container -->
+                <div class="chat-container">
+                    <!-- Welcome Screen -->
+                    <div class="welcome-screen" id="welcomeScreen">
+                        <div class="welcome-content">
+                            <h1>Welcome to <span class="glow-text" style="color: var(--q-primary);">Nexus AI</span></h1>
+                            <p>Your Quantum Intelligence Assistant</p>
+                            
+                            <div class="quick-actions">
+                                <button class="quick-btn" data-prompt="Explain quantum computing in simple terms">
+                                    <i class="fas fa-atom"></i>
+                                    Quantum Computing
+                                </button>
+                                <button class="quick-btn" data-prompt="Write a Python script to analyze data">
+                                    <i class="fab fa-python"></i>
+                                    Python Code
+                                </button>
+                                <button class="quick-btn" data-prompt="Help me with my homework">
+                                    <i class="fas fa-graduation-cap"></i>
+                                    Homework Help
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Messages Container -->
+                    <div class="messages-container" id="messagesContainer">
+                        <!-- Messages will be added here -->
+                    </div>
+                    
+                    <!-- Input Area -->
+                    <div class="input-area">
+                        <div class="input-wrapper">
+                            <textarea 
+                                id="messageInput" 
+                                placeholder="Enter your quantum query... (Shift+Enter for new line, Enter to send)"
+                                rows="1"
+                            ></textarea>
+                            <button class="send-btn" id="sendMessageBtn">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <div class="typing-indicator" id="typingIndicator">
+                            <i class="fas fa-ellipsis-h"></i> Nexus AI is thinking...
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
     </div>
 
-    <!-- Audio Elements -->
-    <audio id="loginSound" preload="auto">
-        <source src="assets/sounds/quantum-login.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="clickSound" preload="auto">
-        <source src="assets/sounds/holographic-click.mp3" type="audio/mpeg">
-    </audio>
-
-    <!-- Firebase & Scripts -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script src="js/nexus-firebase.js"></script>
-    <script src="js/nexus-login.js"></script>
-    
-    <script>
-        let progress = 0;
-        const progressInterval = setInterval(() => {
-            progress += Math.random() * 15;
-            document.getElementById('quantumProgress').style.width = `${progress}%`;
-            
-            if (progress >= 100) {
-                clearInterval(progressInterval);
-                setTimeout(() => {
-                    document.getElementById('quantumLoader').style.opacity = '0';
-                    setTimeout(() => {
-                        document.getElementById('quantumLoader').style.display = 'none';
-                        document.querySelector('.nexus-container').style.display = 'block';
-                        initUniverseBackground();
-                    }, 500);
-                }, 300);
-            }
-        }, 100);
         
-        function initUniverseBackground() {
-            particlesJS('particles-js', {
-    particles: {
-        number: { value: 80, density: { enable: true, value_area: 800 } },
-        color: { value: "#6d28d9" },
-        shape: { type: "circle" },
-        opacity: { value: 0.5, random: true },
-        size: { value: 3, random: true },
-        line_linked: {
-            enable: true,
-            distance: 150,
-            color: "#8b5cf6", 
-            opacity: 0.2,
-            width: 1
-        },
-        move: {
-            enable: true,
-            speed: 2,
-            direction: "none",
-            random: true,
-            straight: false,
-            out_mode: "out",
-            bounce: false
+    <!-- ===== ALL JAVASCRIPT IN ONE ===== -->
+    <script>
+        // ===== CONFIGURATION =====
+        const NEXUS_CONFIG = {
+            // 🎯 EDIT API KEYS DISINI:
+            GEMINI_API_KEY: "AIzaSyBiH7xdMUR7aXK8S1AWvuo1qJu2mqabI4g", // Dapetin: https://makersuite.google.com/app/apikey
+            OPENAI_API_KEY: "sk-proj-pLzNccYgL6bdFQZKatWx_#d660WICmGhaJGCVeN5bJeJ2fi5loc6rYXvOtjX7E1vF6M5IdpmQpuT3BlbkFJIpyp40GPHO5Kt4SM83CWlShPS9wxLgKsrzZcJi8141F3C0gEkXfMtLqtX_6xuZbgo-FVzl4EgA", // Dapetin: https://platform.openai.com/api-keys
+            CLAUDE_API_KEY: "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", // Dapetin: https://console.anthropic.com/
+            
+            // Local LLM (Install Ollama: https://ollama.ai/)
+            USE_LOCAL_LLM: false,
+            LOCAL_LLM_URL: "http://localhost:11434/v1",
+            
+            // Firebase (Optional)
+            FIREBASE: {
+                apiKey: "AIzaSyBK-MehTTzURY5jT5stH363Y5_WE4iy-XA",
+                authDomain: "volca-tools.firebaseapp.com",
+                projectId: "volca-tools",
+                storageBucket: "volca-tools.firebasestorage.app",
+                messagingSenderId: "262525907487",
+                appId: "1:262525907487:web:4abc37fa3b583223569b2a"
+            },
+            
+            // UI Settings
+            THEME: "dark",
+            PRIMARY_COLOR: "#ff0080",
+            SECONDARY_COLOR: "#00ffaa"
+        };
+        
+        // ===== GLOBAL VARIABLES =====
+        let currentUser = null;
+        let chatHistory = [];
+        let isTyping = false;
+        
+        // ===== DOM ELEMENTS =====
+        const elements = {
+            // Pages
+            loadingScreen: document.getElementById('loadingScreen'),
+            loginPage: document.getElementById('loginPage'),
+            registerPage: document.getElementById('registerPage'),
+            dashboard: document.getElementById('dashboard'),
+            
+            // Login
+            loginEmail: document.getElementById('loginEmail'),
+            loginPassword: document.getElementById('loginPassword'),
+            togglePassword: document.getElementById('togglePassword'),
+            loginBtn: document.getElementById('loginBtn'),
+            googleLoginBtn: document.getElementById('googleLoginBtn'),
+            showRegister: document.getElementById('showRegister'),
+            
+            // Register
+            backToLogin: document.getElementById('backToLogin'),
+            regName: document.getElementById('regName'),
+            regEmail: document.getElementById('regEmail'),
+            regPassword: document.getElementById('regPassword'),
+            regConfirm: document.getElementById('regConfirm'),
+            toggleRegPassword: document.getElementById('toggleRegPassword'),
+            registerBtn: document.getElementById('registerBtn'),
+            
+            // Dashboard
+            dashboardUsername: document.getElementById('dashboardUsername'),
+            dashboardEmail: document.getElementById('dashboardEmail'),
+            aiModel: document.getElementById('aiModel'),
+            newChatBtn: document.getElementById('newChatBtn'),
+            logoutBtn: document.getElementById('logoutBtn'),
+            welcomeScreen: document.getElementById('welcomeScreen'),
+            messagesContainer: document.getElementById('messagesContainer'),
+            messageInput: document.getElementById('messageInput'),
+            sendMessageBtn: document.getElementById('sendMessageBtn'),
+            typingIndicator: document.getElementById('typingIndicator')
+        };
+        
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Nexus AI Initializing...');
+            
+            // Hide loading screen after 3 seconds
+            setTimeout(() => {
+                elements.loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    elements.loadingScreen.style.display = 'none';
+                    showLoginPage();
+                }, 500);
+            }, 3000);
+            
+            // Setup event listeners
+            setupEventListeners();
+        });
+        
+        // ===== PAGE MANAGEMENT =====
+        function showLoginPage() {
+            hideAllPages();
+            elements.loginPage.style.display = 'block';
+            elements.loginEmail.focus();
         }
-    },
-    interactivity: {
-        detect_on: "canvas",
-        events: {
-            onhover: { enable: true, mode: "repulse" },
-            onclick: { enable: true, mode: "push" }
+        
+        function showRegisterPage() {
+            hideAllPages();
+            elements.registerPage.style.display = 'block';
+            elements.regName.focus();
         }
-    }
-});
+        
+        function showDashboard() {
+            hideAllPages();
+            elements.dashboard.style.display = 'block';
+            
+            // Update user info
+            if (currentUser) {
+                elements.dashboardUsername.textContent = currentUser.name || 'Quantum User';
+                elements.dashboardEmail.textContent = currentUser.email || 'user@nexus.ai';
+            }
+            
+            // Focus on input
+            setTimeout(() => {
+                elements.messageInput.focus();
+            }, 500);
+        }
+        
+        function hideAllPages() {
+            elements.loginPage.style.display = 'none';
+            elements.registerPage.style.display = 'none';
+            elements.dashboard.style.display = 'none';
+        }
+        
+        // ===== EVENT LISTENERS =====
+        function setupEventListeners() {
+            // Password toggles
+            elements.togglePassword?.addEventListener('click', togglePasswordVisibility);
+            elements.toggleRegPassword?.addEventListener('click', toggleRegPasswordVisibility);
+            
+            // Navigation
+            elements.showRegister?.addEventListener('click', showRegisterPage);
+            elements.backToLogin?.addEventListener('click', showLoginPage);
+            
+            // Login
+            elements.loginBtn?.addEventListener('click', handleLogin);
+            elements.googleLoginBtn?.addEventListener('click', handleGoogleLogin);
+            
+            // Register
+            elements.registerBtn?.addEventListener('click', handleRegister);
+            
+            // Dashboard
+            elements.logoutBtn?.addEventListener('click', handleLogout);
+            elements.newChatBtn?.addEventListener('click', startNewChat);
+            elements.sendMessageBtn?.addEventListener('click', sendMessage);
+            
+            // Quick prompts
+            document.querySelectorAll('.quick-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const prompt = this.getAttribute('data-prompt');
+                    elements.messageInput.value = prompt;
+                    elements.messageInput.focus();
+                    elements.messageInput.style.height = 'auto';
+                    elements.messageInput.style.height = elements.messageInput.scrollHeight + 'px';
+                });
+            });
+            
+            // Message input
+            elements.messageInput?.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+            
+            elements.messageInput?.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+            
+            // Nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const page = this.getAttribute('data-page');
+                    showPage(page);
+                });
+            });
+        }
+        
+        function togglePasswordVisibility() {
+            const input = elements.loginPassword;
+            const icon = this.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fas fa-eye';
+            }
+        }
+        
+        function toggleRegPasswordVisibility() {
+            const input = elements.regPassword;
+            const icon = this.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fas fa-eye';
+            }
+        }
+        
+        // ===== AUTHENTICATION =====
+        function handleLogin() {
+            const email = elements.loginEmail.value.trim();
+            const password = elements.loginPassword.value;
+            
+            if (!email || !password) {
+                showNotification('Please enter email and password', 'error');
+                return;
+            }
+            
+            // Simulate login (in real app, connect to Firebase)
+            elements.loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> AUTHENTICATING...';
+            elements.loginBtn.disabled = true;
+            
+            setTimeout(() => {
+                currentUser = {
+                    name: email.split('@')[0],
+                    email: email
+                };
+                
+                showNotification('Quantum synchronization successful!', 'success');
+                showDashboard();
+                
+                elements.loginBtn.innerHTML = '<i class="fas fa-brain"></i> QUANTUM SYNCHRONIZATION';
+                elements.loginBtn.disabled = false;
+            }, 1500);
+        }
+        
+        function handleGoogleLogin() {
+            elements.googleLoginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> CONNECTING...';
+            elements.googleLoginBtn.disabled = true;
+            
+            setTimeout(() => {
+                currentUser = {
+                    name: 'Google User',
+                    email: 'user@gmail.com'
+                };
+                
+                showNotification('Google Quantum Link established!', 'success');
+                showDashboard();
+                
+                elements.googleLoginBtn.innerHTML = '<i class="fab fa-google"></i> CONTINUE WITH GOOGLE';
+                elements.googleLoginBtn.disabled = false;
+            }, 1500);
+        }
+        
+        function handleRegister() {
+            const name = elements.regName.value.trim();
+            const email = elements.regEmail.value.trim();
+            const password = elements.regPassword.value;
+            const confirm = elements.regConfirm.value;
+            
+            if (!name || !email || !password || !confirm) {
+                showNotification('Please fill all fields', 'error');
+                return;
+            }
+
+            if (password !== confirm) {
+                showNotification('Passwords do not match', 'error');
+                return;
+            }
+            
+            elements.registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> CREATING...';
+            elements.registerBtn.disabled = true;
+            
+            setTimeout(() => {
+                currentUser = { name, email };
+                showNotification('Quantum ID created successfully!', 'success');
+                showDashboard();
+                
+                elements.registerBtn.innerHTML = '<i class="fas fa-atom"></i> INITIATE QUANTUM SYNTHESIS';
+                elements.registerBtn.disabled = false;
+            }, 1500);
+        }
+        
+        function handleLogout() {
+            if (confirm('End quantum connection?')) {
+                currentUser = null;
+                chatHistory = [];
+                showLoginPage();
+                showNotification('Quantum connection terminated', 'info');
+            }
+        }
+        
+        // ===== CHAT SYSTEM =====
+        function startNewChat() {
+            if (chatHistory.length > 0 && !confirm('Start new chat? Current chat will be saved.')) {
+                return;
+            }
+            
+            chatHistory = [];
+            elements.messagesContainer.innerHTML = '';
+            elements.welcomeScreen.style.display = 'flex';
+            elements.messagesContainer.style.display = 'none';
+            elements.messageInput.value = '';
+            elements.messageInput.style.height = '50px';
+            
+            showNotification('New quantum chat started', 'info');
+        }
+        
+        function sendMessage() {
+            const message = elements.messageInput.value.trim();
+            if (!message || isTyping) return;
+            
+            // Hide welcome screen
+            elements.welcomeScreen.style.display = 'none';
+            elements.messagesContainer.style.display = 'flex';
+            
+            // Add user message
+            addMessage(message, 'user');
+            
+            // Clear input
+            elements.messageInput.value = '';
+            elements.messageInput.style.height = '50px';
+            
+            // Show typing indicator
+            isTyping = true;
+            elements.typingIndicator.style.display = 'block';
+            
+            // Simulate AI response (in real app, call API)
+            setTimeout(() => {
+                generateAIResponse(message);
+            }, 1000 + Math.random() * 1000);
+        }
+        
+        function addMessage(text, sender) {
+            const messageId = 'msg_' + Date.now();
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            messageDiv.id = messageId;
+            
+            const avatarIcon = sender === 'user' ? 'fa-user' : 'fa-robot';
+            const avatarColor = sender === 'user' ? 'var(--q-primary)' : 'var(--q-accent)';
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar" style="background: ${avatarColor};">
+                    <i class="fas ${avatarIcon}"></i>
+                </div>
+                <div class="message-content">
+                    <div class="message-header">
+                        <span>${sender === 'user' ? 'You' : 'Nexus AI'}</span>
+                        <span>${time}</span>
+                    </div>
+                    <div class="message-text">${formatMessage(text)}</div>
+                    <div style="margin-top: 10px; display: flex; gap: 10px;">
+                        <button onclick="copyMessage('${messageId}')" style="background: none; border: none; color: var(--q-text-muted); cursor: pointer;">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        ${sender === 'ai' ? `
+                        <button onclick="regenerateMessage('${messageId}')" style="background: none; border: none; color: var(--q-text-muted); cursor: pointer;">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            
+            elements.messagesContainer.appendChild(messageDiv);
+            elements.messagesContainer.scrollTop = elements.messagesContainer.scrollHeight;
+            
+            // Save to history
+            chatHistory.push({
+                id: messageId,
+                text: text,
+                sender: sender,
+                time: time
+            });
+        }
+        
+        function formatMessage(text) {
+            // Simple formatting
+            return text
+                .replace(/\n/g, '<br>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/`([^`]+)`/g, '<code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;">$1</code>');
+        }
+        
+        function generateAIResponse(userMessage) {
+            const model = elements.aiModel.value;
+            
+            // Sample responses based on model
+            const responses = {
+                gemini: `Halo! Saya Gemini dari Google AI. Anda bertanya: "${userMessage}"
+                
+Saya bisa membantu dengan berbagai hal seperti:
+• Pemrograman dan debugging
+• Analisis data
+• Penulisan kreatif
+• Penjelasan konsep teknis
+
+Ada yang spesifik yang ingin Anda tanyakan? 🤖`,
+                
+                openai: `Hello! I'm GPT from OpenAI. You asked: "${userMessage}"
+                
+I can assist you with:
+• Code generation in multiple languages
+• Problem solving and analysis
+• Creative writing and content generation
+• Learning and explanations
+
+How can I help you today? 🚀`,
+                
+                claude: `Greetings! I'm Claude from Anthropic. Regarding: "${userMessage}"
+                
+As an AI assistant focused on safety and helpfulness, I can:
+• Provide detailed explanations
+• Help with research and analysis
+• Assist with writing and editing
+• Answer questions accurately
+
+What would you like to explore? 🧠`,
+                
+                local: `Yo! I'm running locally on your machine. You said: "${userMessage}"
+                
+Local LLM advantages:
+• 100% private - no data leaves your computer
+• Completely free to use
+• Works offline
+• Customizable
+
+The future is decentralized! 💻`,
+                
+                auto: `🔥 NEXUS AI RESPONSE 🔥
+Question: "${userMessage}"
+                
+As your Quantum Intelligence Assistant, I can help with:
+1. **Coding & Development** - Any language, any framework
+2. **Data Analysis** - CSV, JSON, SQL, visualizations
+3. **Content Creation** - Articles, stories, marketing copy
+4. **Learning & Research** - Explanations, summaries, tutorials
+5. **Problem Solving** - Logic, math, business strategies
+
+Which area would you like to focus on? 🎯`
+            };
+            
+            const response = responses[model] || responses.auto;
+            
+            // Add AI message
+            addMessage(response, 'ai');
+            
+            // Hide typing indicator
+            isTyping = false;
+            elements.typingIndicator.style.display = 'none';
+        }
+        
+        // ===== UTILITY FUNCTIONS =====
+        function copyMessage(messageId) {
+            const messageDiv = document.getElementById(messageId);
+            if (!messageDiv) return;
+            
+            const messageText = messageDiv.querySelector('.message-text').textContent;
+            
+            navigator.clipboard.writeText(messageText).then(() => {
+                showNotification('Message copied to clipboard', 'success');
+            });
+        }
+        
+        function regenerateMessage(messageId) {
+            // Find and regenerate the last AI message
+            const aiMessages = chatHistory.filter(m => m.sender === 'ai');
+            if (aiMessages.length > 0) {
+                const lastAiMessage = aiMessages[aiMessages.length - 1];
+                const userMessage = chatHistory[chatHistory.length - 2]; // Message before AI
+                
+                if (userMessage && userMessage.sender === 'user') {
+                    // Remove both messages
+                    document.getElementById(lastAiMessage.id)?.remove();
+                    document.getElementById(userMessage.id)?.remove();
+                    
+                    // Remove from history
+                    chatHistory = chatHistory.filter(m => 
+                        m.id !== lastAiMessage.id && m.id !== userMessage.id
+                    );
+                    
+                    // Regenerate
+                    addMessage(userMessage.text, 'user');
+                    
+                    isTyping = true;
+                    elements.typingIndicator.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        generateAIResponse(userMessage.text);
+                    }, 1000);
+                }
+            }
+        }
+        
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 25px;
+                background: ${type === 'error' ? '#ef4444' : 
+                           type === 'success' ? '#10b981' : 
+                           type === 'warning' ? '#f59e0b' : 
+                           'var(--q-accent)'};
+                color: white;
+                border-radius: 10px;
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+            
+            // Add animation styles if not exists
+            if (!document.querySelector('#notification-styles')) {
+                const style = document.createElement('style');
+                style.id = 'notification-styles';
+                style.textContent = `
+                    @keyframes slideIn {
+                        from { transform: translateX(100%); opacity: 0; }
+                        to { transform: translateX(0); opacity: 1; }
+                    }
+                    @keyframes slideOut {
+                        from { transform: translateX(0); opacity: 1; }
+                        to { transform: translateX(100%); opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+        
+        function showPage(page) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+            
+            // Show selected page
+            const pageElement = document.getElementById(page + 'Page');
+            if (pageElement) {
+                pageElement.style.display = 'block';
+            }
+            
+            // Update welcome message for chat page
+            if (page === 'chat') {
+                elements.welcomeScreen.style.display = 'flex';
+                elements.messagesContainer.style.display = 'none';
+            }
+        }
+        
+        // ===== API CONFIGURATION HELPER =====
+        function showAPIConfig() {
+            const configHTML = `
+                <div style="
+                    position: fixed;
+                    top: 0; left: 0;
+                    width: 100%; height: 100%;
+                    background: rgba(0,0,0,0.8);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10000;
+                ">
+                    <div style="
+                        background: var(--q-card);
+                        padding: 30px;
+                        border-radius: 15px;
+                        max-width: 600px;
+                        width: 90%;
+                        max-height: 80vh;
+                        overflow-y: auto;
+                    ">
+                        <h2 style="margin-bottom: 20px; color: var(--q-primary);">
+                            <i class="fas fa-key"></i> API Configuration
+                        </h2>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <h4>Google Gemini</h4>
+                            <input type="text" placeholder="AIzaSy..." style="width: 100%; padding: 10px; margin: 5px 0;">
+                            <small>Get free key: <a href="https://makersuite.google.com/app/apikey" target="_blank">Google AI Studio</a></small>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <h4>OpenAI</h4>
+                            <input type="text" placeholder="sk-proj-..." style="width: 100%; padding: 10px; margin: 5px 0;">
+                            <small>Get $5 free: <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI Platform</a></small>
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px; margin-top: 30px;">
+                            <button onclick="this.parentElement.parentElement.parentElement.remove()" style="
+                                padding: 10px 20px;
+                                background: var(--q-accent);
+                                border: none;
+                                border-radius: 8px;
+                                color: white;
+                                cursor: pointer;
+                            ">
+                                Save Configuration
+                            </button>
+                            <button onclick="this.parentElement.parentElement.parentElement.remove()" style="
+                                padding: 10px 20px;
+                                background: transparent;
+                                border: 1px solid var(--q-accent);
+                                border-radius: 8px;
+                                color: var(--q-text);
+                                cursor: pointer;
+                            ">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const div = document.createElement('div');
+            div.innerHTML = configHTML;
+            document.body.appendChild(div);
+        }
+        
+        // Make functions globally available
+        window.copyMessage = copyMessage;
+        window.regenerateMessage = regenerateMessage;
+        window.showAPIConfig = showAPIConfig;
+        
+        console.log('✅ Nexus AI v10.0 Ready!');
+        console.log('🎯 Add your API keys in the NEXUS_CONFIG object');
+        console.log('🚀 Powered by VOLCA v10.0');
     </script>
 </body>
 </html>
+    

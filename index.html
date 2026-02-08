@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +7,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- LOADING ANIMATION -->
     <div id="loadingScreen" class="active">
         <div class="quantum-loader">
             <div class="atom-core">
@@ -28,7 +26,6 @@
         </div>
     </div>
 
-    <!-- LOGIN PAGE -->
     <div id="loginPage" class="hidden">
         <div class="login-container">
             <div class="logo-header">
@@ -103,9 +100,7 @@
         </div>
     </div>
 
-    <!-- MAIN DASHBOARD -->
     <div id="dashboard" class="hidden">
-        <!-- TOP NAV -->
         <div class="top-nav">
             <div class="nav-left">
                 <button class="menu-toggle" id="menuToggle">
@@ -143,9 +138,7 @@
             </div>
         </div>
 
-        <!-- MAIN LAYOUT -->
         <div class="main-layout">
-            <!-- SIDEBAR HISTORY -->
             <div class="sidebar" id="sidebar">
                 <div class="sidebar-header">
                     <h3><i class="fas fa-history"></i> CHAT HISTORY</h3>
@@ -161,9 +154,7 @@
                     <input type="text" placeholder="Search history..." id="historySearch">
                     <i class="fas fa-search"></i>
                 </div>
-                
                 <div class="history-list" id="historyList">
-                    <!-- Dynamic history items will be here -->
                 </div>
                 
                 <div class="storage-warning" id="storageWarning">
@@ -186,9 +177,7 @@
                 </div>
             </div>
 
-            <!-- CHAT CONTAINER -->
             <div class="chat-container">
-                <!-- WELCOME SCREEN -->
                 <div class="welcome-screen" id="welcomeScreen">
                     <div class="welcome-content">
                         <div class="welcome-logo">
@@ -221,15 +210,10 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- CHAT MESSAGES -->
                 <div class="messages-container" id="messagesContainer">
-                    <!-- Messages appear here -->
                 </div>
 
-                <!-- CHAT INPUT -->
                 <div class="chat-input-area">
-                    <!-- KEY LOCK WARNING -->
                     <div class="key-lock-warning hidden" id="keyLockWarning">
                         <div class="lock-message">
                             <i class="fas fa-ban"></i>
@@ -281,7 +265,6 @@
                 </div>
             </div>
 
-            <!-- RIGHT SETTINGS PANEL -->
             <div class="settings-panel" id="settingsPanel">
                 <div class="panel-header">
                     <h3><i class="fas fa-sliders-h"></i> CHAT SETTINGS</h3>
@@ -353,7 +336,6 @@
             </div>
         </div>
 
-        <!-- CANVAS MODAL -->
         <div class="canvas-modal hidden" id="canvasModal">
             <div class="canvas-header">
                 <h3><i class="fas fa-code"></i> CODE CANVAS</h3>
@@ -410,7 +392,6 @@
             </div>
         </div>
 
-        <!-- API KEYS MODAL -->
         <div class="api-modal hidden" id="apiModal">
             <div class="api-header">
                 <h3><i class="fas fa-key"></i> API KEYS CONFIGURATION</h3>
@@ -455,7 +436,7 @@
                 <div class="api-section">
                     <h4><i class="fas fa-brain"></i> ANTHROPIC CLAUDE</h4>
                     <div class="api-input-group">
-                        <input type="password" id="claudeKey" placeholder="sk-ant-...">
+                        <input type="password" id="claudeKey" placeholder="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">
                         <button class="api-action-btn">
                             <i class="fas fa-eye"></i>
                         </button>
@@ -492,7 +473,6 @@
         </div>
     </div>
 
-    <!-- FIREBASE & AUDIO RECORDER SCRIPTS -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
